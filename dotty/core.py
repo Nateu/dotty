@@ -160,18 +160,12 @@ class Commands:
             case CommandIdentifier.GET_THEME:
                 return self._get_theme()
             case CommandIdentifier.SET_SUBSTITUTION:
-                return self._set_substitution(message.body)
+                return self._set_substitution(command, message.body)
 
-    def _set_substitution(self, message_body: str):
-        logging.debug(' -> ')
-        trigger, substitution = message_body.split(' -> ')
-        self._all_commands.append(
-            SubstitutionCommand(
-                CommandIdentifier.SUBSTITUTION,
-                trigger,
-                substitution
-            )
-        )
+    def _set_substitution(self, command: Command, message_body: str):
+        trigger, substitution = message_body.split(command.get_trigger())
+        logging.debug(f'Set substitution {trigger}')
+        self._all_commands.append(SubstitutionCommand(CommandIdentifier.SUBSTITUTION, trigger, substitution))
         return f'When you say: "{trigger}", I say: {substitution}'
 
     def _get_theme(self):
@@ -180,19 +174,19 @@ class Commands:
 
     def _set_theme(self, command, message_body):
         self._theme = message_body[len(command.get_trigger()):]
-        logging.debug(f'set theme: {self._theme}')
+        logging.debug(f'Set theme: {self._theme}')
         return f'Theme set to: {self._theme}'
 
     def _apply_substitution(self, command):
-        logging.debug(f'substitution -> {command}')
+        logging.debug(f'Apply substitution: {command}')
         return str(command)
 
     def _list_substitutions(self):
-        logging.debug('list')
+        logging.debug('List all substitutions')
         substitutions_string = ", ".join([command.get_trigger() for command in self._all_commands if command.is_substitution()])
         return f'These substitutions are set: {substitutions_string}'
 
     def _list_commands(self):
-        logging.debug('usage')
+        logging.debug('List commands')
         commands_string = "".join([f"{command}\n" for command in self._all_commands if not command.is_substitution()])
         return f"These commands are available:\n{commands_string}"
