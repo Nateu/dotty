@@ -12,7 +12,7 @@ with describe("Given dotty.core commands.process_message ") as self:
         with it("should print all commands"):
             expect(self.commands.process_message("usage")).to(
                 equal(
-                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after)\n'
+                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after)\n"Theme" - This will give back the current theme\n"Set Theme" - This will set a theme, anything after "set theme " will be the theme\n'
                 )
             )
 
@@ -25,6 +25,24 @@ with describe("Given dotty.core commands.process_message ") as self:
             expect(self.commands.process_message("rules -> Follow tha rules")).to(
                 equal('When you say: "rules", I say: Follow tha rules')
             )
+
+    with context("when you send: Theme"):
+        with it("should respond with: No theme set"):
+            expect(self.commands.process_message("Theme")).to(equal("No theme set"))
+
+    with context("when you send: set theme Avater, the last Airbender"):
+        with it("should respond with: theme set to: Avater, the last Airbender"):
+            expect(self.commands.process_message("set theme Avater, the last Airbender")).to(
+                equal("Theme set to: Avater, the last Airbender")
+            )
+
+    with context('when you send have the theme "Avater, the last Airbender" set'):
+        with before.each:
+            self.commands.process_message("set theme Avater, the last Airbender")
+
+        with context("when you send: Theme"):
+            with it("should respond with: Avater, the last Airbender"):
+                expect(self.commands.process_message("Theme")).to(equal("Avater, the last Airbender"))
 
     with context("when you send have two triggers set: rules and hello"):
         with before.each:

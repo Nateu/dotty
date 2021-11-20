@@ -15,7 +15,9 @@ class CommandIdentifier(Enum):
     LIST_COMMANDS = auto()
     LIST_SUBSTITUTIONS = auto()
     SET_SUBSTITUTION = auto()
+    SET_THEME = auto()
     SUBSTITUTION = auto()
+    GET_THEME = auto()
 
 
 class Command:
@@ -87,7 +89,8 @@ class SubstitutionCommand(Command):
 
 class Commands:
     def __init__(self, name: str = "Dotty"):
-        self._name = name
+        self._name: str = name
+        self._theme: str = 'No theme set'
         self._all_commands: List[Command] = []
         self._all_commands.append(
             ExactCommand(
@@ -110,48 +113,84 @@ class Commands:
                 f'On the trigger (before) -> {self._name} will respond with message (after)',
             )
         )
-
-    def _get_commands(self) -> str:
-        return "".join([f"{command}\n" for command in self._all_commands if not command.is_substitution()])
-
-    def print_commands(self) -> str:
-        return f"These commands are available:\n{self._get_commands()}"
-
-    def _get_substitutions(self) -> str:
-        subs = [command.get_trigger() for command in self._all_commands if command.is_substitution()]
-        logging.debug(f"Subs: {', '.join(subs)}")
-        return ", ".join(subs)
+        self._all_commands.append(
+            ExactCommand(
+                CommandIdentifier.GET_THEME,
+                "Theme",
+                f'This will give back the current theme',
+            )
+        )
+        self._all_commands.append(
+            StartsWithCommand(
+                CommandIdentifier.SET_THEME,
+                "Set Theme",
+                f'This will set a theme, anything after "set theme " will be the theme',
+            )
+        )
 
     def process_message(self, message):
-        logging.debug(f"Hello, my name is {self._name}.")
-        response = ''
         for command in self._all_commands:
             logging.debug(f"Checking Command: {command.get_trigger_lower_case()}")
             if command.has_match(message):
                 logging.debug(f"Found a match: {command.get_trigger_lower_case()}")
-                match command.identifier:
-                    case CommandIdentifier.LIST_COMMANDS:
-                        logging.debug('usage')
-                        response = self.print_commands()
-                        break
-                    case CommandIdentifier.LIST_SUBSTITUTIONS:
-                        logging.debug('list')
-                        response = F'These substitutions are set: {self._get_substitutions()}'
-                        break
-                    case CommandIdentifier.SET_SUBSTITUTION:
-                        logging.debug(' -> ')
-                        trigger, substitution = message.split(' -> ')
-                        self._all_commands.append(
-                            SubstitutionCommand(
-                                CommandIdentifier.SUBSTITUTION,
-                                trigger,
-                                substitution
-                            )
-                        )
-                        response = F'When you say: "{trigger}", I say: {substitution}'
-                        break
-                    case CommandIdentifier.SUBSTITUTION:
-                        logging.debug(f'substitution -> {command}')
-                        response = str(command)
-                        break
+                response = self._process_command(command, message)
+                break
+        return response
+
+    def _process_command(self, command, message):
+        response = ''
+        match command.identifier:
+            case CommandIdentifier.LIST_COMMANDS:
+                response = self._list_commands()
+            case CommandIdentifier.LIST_SUBSTITUTIONS:
+                response = self._list_substitutions()
+            case CommandIdentifier.SUBSTITUTION:
+                response = self._apply_substitution(command)
+            case CommandIdentifier.SET_THEME:
+                response = self._set_theme(command, message)
+            case CommandIdentifier.GET_THEME:
+                response = self._get_theme()
+            case CommandIdentifier.SET_SUBSTITUTION:
+                response = self._set_substitution(message)
+        return response
+
+    def _set_substitution(self, message):
+        logging.debug(' -> ')
+        trigger, substitution = message.split(' -> ')
+        self._all_commands.append(
+            SubstitutionCommand(
+                CommandIdentifier.SUBSTITUTION,
+                trigger,
+                substitution
+            )
+        )
+        response = F'When you say: "{trigger}", I say: {substitution}'
+        return response
+
+    def _get_theme(self):
+        logging.debug(f'Get theme {self._theme}')
+        response = self._theme
+        return response
+
+    def _set_theme(self, command, message):
+        self._theme = message[len(command.get_trigger()) + 1:]
+        logging.debug(f'set theme: {self._theme}')
+        response = f'Theme set to: {self._theme}'
+        return response
+
+    def _apply_substitution(self, command):
+        logging.debug(f'substitution -> {command}')
+        response = str(command)
+        return response
+
+    def _list_substitutions(self):
+        logging.debug('list')
+        substitutions_string = ", ".join([command.get_trigger() for command in self._all_commands if command.is_substitution()])
+        response = f'These substitutions are set: {substitutions_string}'
+        return response
+
+    def _list_commands(self):
+        logging.debug('usage')
+        commands_string = "".join([f"{command}\n" for command in self._all_commands if not command.is_substitution()])
+        response = f"These commands are available:\n{commands_string}"
         return response
