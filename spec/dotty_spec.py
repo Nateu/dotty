@@ -1,74 +1,138 @@
 from expects import equal, expect
 from mamba import before, context, describe, it
-from dotty.core import Commands, Message
+from dotty.core import ChatBot, Message
 
-base_message = Message("replace me", "@user", "#group")
-
-with describe("Given dotty.core commands.process_message ") as self:
+with describe("Given dotty.core ChatBot.process_message") as self:
     with before.each:
-        self.commands = Commands()
+        self.chat_bot = ChatBot("Dotty", "@owner")
+
+    with context("when a guest sends a message"):
+        with it("should not respond at all"):
+            input_message = Message("stuff from a guest", "@guest", "#group")
+            expect(self.chat_bot.process_message(input_message)).to(equal(None))
 
     with context("when you send a non command"):
         with it("should not respond at all"):
-            base_message.body = "stuff that will never be a command"
-            expect(self.commands.process_message(base_message)).to(equal(None))
+            input_message = Message("stuff that will never be a command", "@owner", "#group")
+            expect(self.chat_bot.process_message(input_message)).to(equal(None))
+
+    with context("when you grant @admin Security level Admin"):
+        with it('should say "User registered"'):
+            input_message = Message("Grant Admin @admin", "@owner", "#group")
+            expect(self.chat_bot.process_message(input_message)).to(equal("User registered"))
+
+    with context("and you grant @someone Security level Owner"):
+        with it('should say "User registered"'):
+            input_message = Message("Grant Owner @someone", "@owner", "#group")
+            expect(self.chat_bot.process_message(input_message)).to(equal("User registered"))
 
     with context("when you send: usage"):
         with it("should print all commands"):
-            base_message.body = "usage"
-            expect(self.commands.process_message(base_message)).to(
+            input_message = Message("usage", "@owner", "#group")
+            expect(self.chat_bot.process_message(input_message)).to(
                 equal(
-                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after)\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, anything after "set theme " will be the theme\n'
+                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after) [USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) [ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, anything after "set theme " will be the theme\n"Grant User " - Command to grant a member user status\n"Grant Admin " - Command to grant a member admin status\n"Grant Owner " - Command to grant a member owner status\n'
                 )
             )
 
-    with context("when you send: list"):
-        with it("should return a string starting with These substitutions are set: "):
-            base_message.body = "list"
-            expect(self.commands.process_message(base_message)).to(equal("These substitutions are set: "))
-
-    with context("when you send: rules -> Follow tha rules"):
-        with it("should respond with the substitution set"):
-            base_message.body = "rules -> Follow tha rules"
-            expect(self.commands.process_message(base_message)).to(
-                equal('When you say: "rules", I say: Follow tha rules')
-            )
-
-    with context("when you send: Theme"):
-        with it("should respond with: No theme set"):
-            base_message.body = "Theme"
-            expect(self.commands.process_message(base_message)).to(equal("No theme set"))
-
-    with context("when you send: set theme Avater, the last Airbender"):
-        with it("should respond with: theme set to: Avater, the last Airbender"):
-            base_message.body = "set theme Avater, the last Airbender"
-            expect(self.commands.process_message(base_message)).to(equal("Theme set to: Avater, the last Airbender"))
-
-    with context('when you send have the theme "Avater, the last Airbender" set'):
+    with context("when an admin speaks"):
         with before.each:
-            base_message.body = "set theme Avater, the last Airbender"
-            self.commands.process_message(base_message)
+            input_message = Message("Grant Admin @admin", "@owner", "#group")
+            self.chat_bot.process_message(input_message)
 
-        with context("when you send: Theme"):
-            with it("should respond with: Avater, the last Airbender"):
-                base_message.body = "Theme"
-                expect(self.commands.process_message(base_message)).to(equal("Avater, the last Airbender"))
-
-    with context("when you send have two triggers set: rules and hello"):
-        with before.each:
-            base_message.body = "Hello -> Hello my name is Dotty"
-            self.commands.process_message(base_message)
-            base_message.body = "rules -> Follow tha rules"
-            self.commands.process_message(base_message)
-
-        with context("when you send: list"):
-            with it("should respond with: These substitutions are set: Hello, rules"):
-                base_message.body = "list"
-                expect(self.commands.process_message(base_message)).to(
-                    equal("These substitutions are set: Hello, rules")
+        with context("and they sent: usage"):
+            with it("should print all commands"):
+                input_message = Message("usage", "@admin", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(
+                    equal(
+                        'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after) [USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) [ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, anything after "set theme " will be the theme\n"Grant User " - Command to grant a member user status\n'
+                    )
                 )
 
-        with context("when you send: hello"):
-            with it("should respond with: Hello my name is Dotty"):
-                base_message.body = "hello"
-                expect(self.commands.process_message(base_message)).to(equal("Hello my name is Dotty"))
+        with context("and they send: rules -> Follow tha rules"):
+            with it("should respond with the substitution set"):
+                input_message = Message("rules -> Follow tha rules", "@admin", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(
+                    equal('When you say: "rules", I say: Follow tha rules')
+                )
+
+        with context("and they send: set theme Avatar, the last Airbender"):
+            with it("should respond with: theme set to: Avatar, the last Airbender"):
+                input_message = Message("set theme Avatar, the last Airbender", "@admin", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(
+                    equal("Theme set to: Avatar, the last Airbender")
+                )
+
+        with context("and they send: Admin => The best people around!"):
+            with it('should respond with: When you say: "Admin", I say: The best people around!'):
+                input_message = Message("Admin => The best people around!", "@admin", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(
+                    equal('When you say: "Admin", I say: The best people around!')
+                )
+
+        with context("and they grant @user Security level User"):
+            with it('should say "User registered"'):
+                input_message = Message("Grant User @user", "@admin", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(equal("User registered"))
+
+        with context("and @user has the Security level User"):
+            with before.each:
+                input_message = Message("Grant User @user", "@admin", "#group")
+                self.chat_bot.process_message(input_message)
+
+            with context("and they grant @user Security level User for the second time"):
+                with it('should say "User already registered"'):
+                    input_message = Message("Grant User @user", "@admin", "#group")
+                    expect(self.chat_bot.process_message(input_message)).to(equal("User already registered"))
+
+    with context("when an user speaks"):
+        with before.each:
+            input_message = Message("Grant User @user", "@owner", "#group")
+            self.chat_bot.process_message(input_message)
+
+        with context("and they send: list"):
+            with it("should return a string starting with These substitutions are set: "):
+                input_message = Message("list", "@user", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(equal("These substitutions are set: "))
+
+        with context("and they send: Theme"):
+            with it("should respond with: No theme set"):
+                input_message = Message("Theme", "@user", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(equal("No theme set"))
+
+        with context("and they send: Grant Owner @me"):
+            with it("should not respond"):
+                input_message = Message("Grant Owner @me", "@user", "#group")
+                expect(self.chat_bot.process_message(input_message)).to(equal(None))
+
+        with context('and the theme "Avatar, the last Airbender" set'):
+            with before.each:
+                input_message = Message("set theme Avatar, the last Airbender", "@owner", "#group")
+                self.chat_bot.process_message(input_message)
+
+            with context("and they send: Theme"):
+                with it("should respond with: Avatar, the last Airbender"):
+                    input_message = Message("Theme", "@user", "#group")
+                    expect(self.chat_bot.process_message(input_message)).to(equal("Avatar, the last Airbender"))
+
+        with context("and there are two triggers set: rules (user) and hello (admin)"):
+            with before.each:
+                input_message = Message("Hello => Hello my name is Dotty", "@owner", "#group")
+                self.chat_bot.process_message(input_message)
+                input_message.body = "rules -> Follow tha rules"
+                self.chat_bot.process_message(input_message)
+
+            with context("and they send: list"):
+                with it("should respond with: These substitutions are set: rules"):
+                    input_message = Message("list", "@user", "#group")
+                    expect(self.chat_bot.process_message(input_message)).to(equal("These substitutions are set: rules"))
+
+            with context("and they send: rules"):
+                with it("should respond with: Follow tha rules"):
+                    input_message = Message("rules", "@user", "#group")
+                    expect(self.chat_bot.process_message(input_message)).to(equal("Follow tha rules"))
+
+            with context("and they send: hello"):
+                with it("should not respond as it's an Admin substitution"):
+                    input_message = Message("hello", "@user", "#group")
+                    expect(self.chat_bot.process_message(input_message)).to(equal(None))
