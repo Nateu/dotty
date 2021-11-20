@@ -160,33 +160,27 @@ class Commands:
                 substitution
             )
         )
-        response = F'When you say: "{trigger}", I say: {substitution}'
-        return response
+        return f'When you say: "{trigger}", I say: {substitution}'
 
     def _get_theme(self):
         logging.debug(f'Get theme {self._theme}')
-        response = self._theme
-        return response
+        return self._theme
 
     def _set_theme(self, command, message):
         self._theme = message[len(command.get_trigger()) + 1:]
         logging.debug(f'set theme: {self._theme}')
-        response = f'Theme set to: {self._theme}'
-        return response
+        return f'Theme set to: {self._theme}'
 
     def _apply_substitution(self, command):
         logging.debug(f'substitution -> {command}')
-        response = str(command)
-        return response
+        return str(command)
 
     def _list_substitutions(self):
         logging.debug('list')
         substitutions_string = ", ".join([command.get_trigger() for command in self._all_commands if command.is_substitution()])
-        response = f'These substitutions are set: {substitutions_string}'
-        return response
+        return f'These substitutions are set: {substitutions_string}'
 
     def _list_commands(self):
         logging.debug('usage')
         commands_string = "".join([f"{command}\n" for command in self._all_commands if not command.is_substitution()])
-        response = f"These commands are available:\n{commands_string}"
-        return response
+        return f"These commands are available:\n{commands_string}"
