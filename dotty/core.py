@@ -133,26 +133,22 @@ class Commands:
             logging.debug(f"Checking Command: {command.get_trigger_lower_case()}")
             if command.has_match(message):
                 logging.debug(f"Found a match: {command.get_trigger_lower_case()}")
-                response = self._process_command(command, message)
-                break
-        return response
+                return self._process_command(command, message)
 
     def _process_command(self, command, message):
-        response = ''
         match command.identifier:
             case CommandIdentifier.LIST_COMMANDS:
-                response = self._list_commands()
+                return self._list_commands()
             case CommandIdentifier.LIST_SUBSTITUTIONS:
-                response = self._list_substitutions()
+                return self._list_substitutions()
             case CommandIdentifier.SUBSTITUTION:
-                response = self._apply_substitution(command)
+                return self._apply_substitution(command)
             case CommandIdentifier.SET_THEME:
-                response = self._set_theme(command, message)
+                return self._set_theme(command, message)
             case CommandIdentifier.GET_THEME:
-                response = self._get_theme()
+                return self._get_theme()
             case CommandIdentifier.SET_SUBSTITUTION:
-                response = self._set_substitution(message)
-        return response
+                return self._set_substitution(message)
 
     def _set_substitution(self, message):
         logging.debug(' -> ')

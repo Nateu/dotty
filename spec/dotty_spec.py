@@ -8,6 +8,10 @@ with describe("Given dotty.core commands.process_message ") as self:
     with before.each:
         self.commands = Commands()
 
+    with context("when you send a non command"):
+        with it("should not respond at all"):
+            expect(self.commands.process_message("stuff that will never be a command")).to(equal(None))
+
     with context("when you send: usage"):
         with it("should print all commands"):
             expect(self.commands.process_message("usage")).to(
