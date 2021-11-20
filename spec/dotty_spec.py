@@ -1,6 +1,8 @@
 from expects import equal, expect
 from mamba import before, context, describe, it
+
 from dotty.core import ChatBot, Message
+
 
 with describe("Given dotty.core ChatBot.process_message") as self:
     with before.each:

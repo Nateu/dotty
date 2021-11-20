@@ -1,7 +1,7 @@
-from enum import Enum, auto
-from typing import List
-from functools import total_ordering
 import logging
+from enum import Enum, auto
+from functools import total_ordering
+from typing import List
 
 
 class CommandType(Enum):
@@ -142,7 +142,7 @@ class User:
         return self._security_level
 
 
-class Users:
+class UserRegistry:
     def __init__(self):
         self._all_users: List[User] = []
 
@@ -161,8 +161,8 @@ class ChatBot:
     def __init__(self, name: str, owner_identifier: str):
         self._name: str = name
         self._theme: str = 'No theme set'
-        self._users = Users()
-        self._users.register_user(owner_identifier, SecurityLevel.OWNER)
+        self._users_registry = UserRegistry()
+        self._users_registry.register_user(owner_identifier, SecurityLevel.OWNER)
         self._all_commands: List[Command] = []
         self._all_commands.append(
             ExactCommand(
@@ -247,8 +247,8 @@ class ChatBot:
                 return self._process_command(command, message)
 
     def _get_user_security_level(self, user_identifier):
-        if self._users.is_registered_user(user_identifier):
-            return self._users.get_user(user_identifier).get_user_clearance_level()
+        if self._users_registry.is_registered_user(user_identifier):
+            return self._users_registry.get_user(user_identifier).get_user_clearance_level()
         return SecurityLevel.GUEST
 
     def _process_command(self, command: Command, message: Message) -> str:
@@ -307,5 +307,5 @@ class ChatBot:
         user_identifier = message_body[len(command.get_trigger()):]
         if self._get_user_security_level(user_identifier) >= role:
             return "User already registered"
-        self._users.register_user(user_identifier, role)
+        self._users_registry.register_user(user_identifier, role)
         return "User registered"
