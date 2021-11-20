@@ -20,6 +20,18 @@ class CommandIdentifier(Enum):
     GET_THEME = auto()
 
 
+class Message:
+    def __init__(self, body: str, sent_by: str, sent_in: str):
+        self.sent_by = sent_by
+        self.sent_in = sent_in
+        self.body = body
+
+    def __eq__(self, other):
+        if isinstance(other, Message):
+            return self.body == other.body and self.sent_by == other.sent_by and self.sent_in == other.sent_in
+        return False
+
+
 class Command:
     def __init__(self, identifier: CommandIdentifier, trigger: str, description: str):
         self._trigger: str = trigger
@@ -30,7 +42,7 @@ class Command:
     def __repr__(self):
         return f'"{self._trigger}" - {self._description}'
 
-    def has_match(self, message: str) -> bool:
+    def has_match(self, message_body: str) -> bool:
         pass
 
     def get_trigger(self) -> str:
@@ -48,9 +60,9 @@ class StartsWithCommand(Command):
         super().__init__(identifier, trigger, description)
         self._type: CommandType = CommandType.STARTS_WITH
 
-    def has_match(self, message: str) -> bool:
-        logging.debug(f"Starts with: [{self.get_trigger_lower_case()}] > [{message.casefold()}]")
-        return message.casefold().startswith(self.get_trigger_lower_case())
+    def has_match(self, message_body: str) -> bool:
+        logging.debug(f"Starts with: [{self.get_trigger_lower_case()}] > [{message_body.casefold()}]")
+        return message_body.casefold().startswith(self.get_trigger_lower_case())
 
 
 class ContainsCommand(Command):
@@ -58,9 +70,9 @@ class ContainsCommand(Command):
         super().__init__(identifier, trigger, description)
         self._type: CommandType = CommandType.CONTAINS
 
-    def has_match(self, message: str) -> bool:
-        logging.debug(f"Checking: [{self.get_trigger_lower_case()}] in [{message.casefold()}]")
-        return self.get_trigger_lower_case() in message.casefold()
+    def has_match(self, message_body: str) -> bool:
+        logging.debug(f"Checking: [{self.get_trigger_lower_case()}] in [{message_body.casefold()}]")
+        return self.get_trigger_lower_case() in message_body.casefold()
 
 
 class ExactCommand(Command):
@@ -68,9 +80,9 @@ class ExactCommand(Command):
         super().__init__(identifier, trigger, description)
         self._type: CommandType = CommandType.EXACT
 
-    def has_match(self, message: str) -> bool:
-        logging.debug(f"Comparing: [{self.get_trigger_lower_case()}] and [{message.casefold()}] {self.get_trigger_lower_case() == message.casefold()}")
-        return self.get_trigger_lower_case() == message.casefold()
+    def has_match(self, message_body: str) -> bool:
+        logging.debug(f"Comparing: [{self.get_trigger_lower_case()}] and [{message_body.casefold()}] {self.get_trigger_lower_case() == message_body.casefold()}")
+        return self.get_trigger_lower_case() == message_body.casefold()
 
 
 class SubstitutionCommand(Command):
@@ -79,9 +91,9 @@ class SubstitutionCommand(Command):
         self._type: CommandType = CommandType.SUBSTITUTION
         self._substitution = substitution
 
-    def has_match(self, message: str) -> bool:
-        logging.debug(f"Comparing: [{self.get_trigger_lower_case()}] and [{message.casefold()}] {self.get_trigger_lower_case() == message.casefold()}")
-        return self.get_trigger_lower_case() == message.casefold()
+    def has_match(self, message_body: str) -> bool:
+        logging.debug(f"Comparing: [{self.get_trigger_lower_case()}] and [{message_body.casefold()}] {self.get_trigger_lower_case() == message_body.casefold()}")
+        return self.get_trigger_lower_case() == message_body.casefold()
 
     def __repr__(self):
         return self._substitution
@@ -128,10 +140,10 @@ class Commands:
             )
         )
 
-    def process_message(self, message):
+    def process_message(self, message: Message):
         for command in self._all_commands:
             logging.debug(f"Checking Command: {command.get_trigger_lower_case()}")
-            if command.has_match(message):
+            if command.has_match(message.body):
                 logging.debug(f"Found a match: {command.get_trigger_lower_case()}")
                 return self._process_command(command, message)
 
@@ -144,15 +156,15 @@ class Commands:
             case CommandIdentifier.SUBSTITUTION:
                 return self._apply_substitution(command)
             case CommandIdentifier.SET_THEME:
-                return self._set_theme(command, message)
+                return self._set_theme(command, message.body)
             case CommandIdentifier.GET_THEME:
                 return self._get_theme()
             case CommandIdentifier.SET_SUBSTITUTION:
-                return self._set_substitution(message)
+                return self._set_substitution(message.body)
 
-    def _set_substitution(self, message):
+    def _set_substitution(self, message_body: str):
         logging.debug(' -> ')
-        trigger, substitution = message.split(' -> ')
+        trigger, substitution = message_body.split(' -> ')
         self._all_commands.append(
             SubstitutionCommand(
                 CommandIdentifier.SUBSTITUTION,
@@ -166,8 +178,8 @@ class Commands:
         logging.debug(f'Get theme {self._theme}')
         return self._theme
 
-    def _set_theme(self, command, message):
-        self._theme = message[len(command.get_trigger()):]
+    def _set_theme(self, command, message_body):
+        self._theme = message_body[len(command.get_trigger()):]
         logging.debug(f'set theme: {self._theme}')
         return f'Theme set to: {self._theme}'
 
