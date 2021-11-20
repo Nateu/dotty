@@ -123,7 +123,7 @@ class Commands:
         self._all_commands.append(
             StartsWithCommand(
                 CommandIdentifier.SET_THEME,
-                "Set Theme",
+                "Set Theme ",
                 f'This will set a theme, anything after "set theme " will be the theme',
             )
         )
@@ -167,7 +167,7 @@ class Commands:
         return self._theme
 
     def _set_theme(self, command, message):
-        self._theme = message[len(command.get_trigger()) + 1:]
+        self._theme = message[len(command.get_trigger()):]
         logging.debug(f'set theme: {self._theme}')
         return f'Theme set to: {self._theme}'
 

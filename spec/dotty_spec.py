@@ -16,7 +16,7 @@ with describe("Given dotty.core commands.process_message ") as self:
         with it("should print all commands"):
             expect(self.commands.process_message("usage")).to(
                 equal(
-                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after)\n"Theme" - This will give back the current theme\n"Set Theme" - This will set a theme, anything after "set theme " will be the theme\n'
+                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after)\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, anything after "set theme " will be the theme\n'
                 )
             )
 
