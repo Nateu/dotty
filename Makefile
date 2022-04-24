@@ -1,4 +1,4 @@
-.PHONY: default init bdd test format sort lint
+.PHONY: default init bdd test format sort lint run
 
 default: test format sort lint
 
@@ -19,3 +19,6 @@ lint:
 
 sort:
 	bash ./scripts/sort.sh
+
+run:
+	poetry run python bot.py
