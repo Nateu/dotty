@@ -1,6 +1,6 @@
 import logging
 from enum import Enum, auto
-from typing import List
+from typing import List, Optional
 
 from dotty.security_level import SecurityLevel
 from dotty.user import UserRegistry
@@ -67,6 +67,9 @@ class Command:
 
     def has_clearance(self, requested_by: SecurityLevel):
         return requested_by >= self._security_level
+
+    def get_security_level(self):
+        return self._security_level
 
 
 class StartsWithCommand(Command):
@@ -245,15 +248,19 @@ class ChatBot:
             case CommandIdentifier.GET_THEME:
                 return self._get_theme()
             case CommandIdentifier.SET_USER_SUBSTITUTION:
-                return self._set_substitution(command, message.body, SecurityLevel.USER)
+                return self._set_substitution(
+                    command=command, message_body=message.body, security_level=SecurityLevel.USER
+                )
             case CommandIdentifier.SET_ADMIN_SUBSTITUTION:
-                return self._set_substitution(command, message.body, SecurityLevel.ADMIN)
+                return self._set_substitution(
+                    command=command, message_body=message.body, security_level=SecurityLevel.ADMIN
+                )
             case CommandIdentifier.SET_ROLE_USER:
-                return self._set_role(command, message.body, SecurityLevel.USER)
+                return self._set_role(command=command, message_body=message.body, role=SecurityLevel.USER)
             case CommandIdentifier.SET_ROLE_ADMIN:
-                return self._set_role(command, message.body, SecurityLevel.ADMIN)
+                return self._set_role(command=command, message_body=message.body, role=SecurityLevel.ADMIN)
             case CommandIdentifier.SET_ROLE_OWNER:
-                return self._set_role(command, message.body, SecurityLevel.OWNER)
+                return self._set_role(command=command, message_body=message.body, role=SecurityLevel.OWNER)
             case CommandIdentifier.REMOVE_ROLE_OWNER:
                 return self._set_role(command=command, message_body=message.body, role=SecurityLevel.ADMIN, revoke=True)
             case CommandIdentifier.REMOVE_ROLE_ADMIN:
@@ -261,9 +268,18 @@ class ChatBot:
             case CommandIdentifier.REMOVE_ROLE_USER:
                 return self._set_role(command=command, message_body=message.body, role=SecurityLevel.GUEST, revoke=True)
 
-    def _set_substitution(self, command: Command, message_body: str, security_level: SecurityLevel) -> str:
+    def _set_substitution(self, command: Command, message_body: str, security_level: SecurityLevel) -> Optional[str]:
         trigger, substitution = message_body.split(command.get_trigger())
         logging.debug(f"Set substitution {trigger}")
+        if trigger in [command.get_trigger() for command in self._all_commands]:
+            if (
+                security_level
+                < [
+                    command.get_security_level() for command in self._all_commands if command.get_trigger() == trigger
+                ].pop()
+            ):
+                return
+        self._all_commands = [command for command in self._all_commands if command.get_trigger() != trigger]
         self._all_commands.append(
             SubstitutionCommand(CommandIdentifier.GET_SUBSTITUTION, trigger, substitution, security_level)
         )
