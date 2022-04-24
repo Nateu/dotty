@@ -56,7 +56,9 @@ with describe("Given dotty.core ChatBot.process_message") as self:
                     'ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, '
                     'anything after "set theme " will be the theme\n"Grant User " - Command to grant a member user '
                     'status\n"Grant Admin " - Command to grant a member admin status\n"Grant Owner " - Command to '
-                    "grant a member owner status\n"
+                    'grant a member owner status\n"Revoke Owner " - Command to revoke a member owner status\n"Revoke '
+                    'Admin " - Command to revoke a member admin status\n"Revoke User " - Command to revoke a member '
+                    "user status\n"
                 )
             )
 
@@ -75,7 +77,7 @@ with describe("Given dotty.core ChatBot.process_message") as self:
                         'after) [USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) '
                         '[ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a '
                         'theme, anything after "set theme " will be the theme\n"Grant User " - Command to grant a '
-                        "member user status\n"
+                        'member user status\n"Revoke User " - Command to revoke a member user status\n'
                     )
                 )
 

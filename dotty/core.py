@@ -25,6 +25,9 @@ class CommandIdentifier(Enum):
     SET_ADMIN_SUBSTITUTION = auto()
     SET_USER_SUBSTITUTION = auto()
     SET_THEME = auto()
+    REMOVE_ROLE_ADMIN = auto()
+    REMOVE_ROLE_OWNER = auto()
+    REMOVE_ROLE_USER = auto()
 
 
 class Message:
@@ -190,6 +193,30 @@ class ChatBot:
                 SecurityLevel.OWNER,
             )
         )
+        self._all_commands.append(
+            StartsWithCommand(
+                CommandIdentifier.REMOVE_ROLE_OWNER,
+                "Revoke Owner ",
+                "Command to revoke a member owner status",
+                SecurityLevel.OWNER,
+            )
+        )
+        self._all_commands.append(
+            StartsWithCommand(
+                CommandIdentifier.REMOVE_ROLE_ADMIN,
+                "Revoke Admin ",
+                "Command to revoke a member admin status",
+                SecurityLevel.OWNER,
+            )
+        )
+        self._all_commands.append(
+            StartsWithCommand(
+                CommandIdentifier.REMOVE_ROLE_USER,
+                "Revoke User ",
+                "Command to revoke a member user status",
+                SecurityLevel.ADMIN,
+            )
+        )
 
     def process_message(self, message: Message) -> str:
         user_security_level = self._get_user_security_level(message.sent_by)
@@ -227,6 +254,12 @@ class ChatBot:
                 return self._set_role(command, message.body, SecurityLevel.ADMIN)
             case CommandIdentifier.SET_ROLE_OWNER:
                 return self._set_role(command, message.body, SecurityLevel.OWNER)
+            case CommandIdentifier.REMOVE_ROLE_OWNER:
+                return self._set_role(command=command, message_body=message.body, role=SecurityLevel.ADMIN, revoke=True)
+            case CommandIdentifier.REMOVE_ROLE_ADMIN:
+                return self._set_role(command=command, message_body=message.body, role=SecurityLevel.USER, revoke=True)
+            case CommandIdentifier.REMOVE_ROLE_USER:
+                return self._set_role(command=command, message_body=message.body, role=SecurityLevel.GUEST, revoke=True)
 
     def _set_substitution(self, command: Command, message_body: str, security_level: SecurityLevel) -> str:
         trigger, substitution = message_body.split(command.get_trigger())
@@ -272,9 +305,15 @@ class ChatBot:
         )
         return f"These commands are available:\n{commands_string}"
 
-    def _set_role(self, command: Command, message_body: str, role: SecurityLevel) -> str:
+    def _set_role(self, command: Command, message_body: str, role: SecurityLevel, revoke: bool = False) -> str:
         user_identifier = message_body[len(command.get_trigger()) :]
-        if self._get_user_security_level(user_identifier) >= role:
-            return "User already registered"
-        self._users_registry.register_user(user_identifier, role)
-        return "User registered"
+        if revoke:
+            if self._get_user_security_level(user_identifier) < role:
+                return "Rights already revoked"
+            self._users_registry.register_user(user_identifier, role)
+            return "Rights revoked"
+        else:
+            if self._get_user_security_level(user_identifier) >= role:
+                return "User already registered"
+            self._users_registry.register_user(user_identifier, role)
+            return "User registered"

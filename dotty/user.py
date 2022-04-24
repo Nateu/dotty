@@ -1,3 +1,4 @@
+import json
 import logging
 from json import dumps
 from typing import List
@@ -30,11 +31,14 @@ class UserRegistry:
     def __init__(self, storage: Storage):
         self._storage_name = "user_register.json"
         self._storage = storage
+        self._all_users: List[User] = []
         data = self._storage.retrieve_data(self._storage_name)
         if data:
-            self._all_users = data
-        else:
-            self._all_users: List[User] = []
+            json_data = json.loads(data)
+            for user in json_data:
+                self._all_users.append(
+                    User(identifier=user["identifier"], security_level=SecurityLevel(user["security level"]))
+                )
 
     def register_user(self, identifier: str, role: SecurityLevel) -> None:
         logging.debug(f"Register user: {identifier}, {role}")
