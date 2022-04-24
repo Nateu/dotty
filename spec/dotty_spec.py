@@ -1,12 +1,29 @@
+from typing import Optional
+
 from expects import equal, expect
 from mamba import before, context, describe, it
 
 from dotty.core import ChatBot, Message
+from dotty.storage import Storage
+from dotty.user import UserRegistry
+
+
+class FakeStorage(Storage):
+    def __init__(self):
+        self._data: str = ""
+
+    def store_in(self, data: str, storage_name: str):
+        self._data = data
+
+    def retrieve_data(self, storage_name: str) -> Optional[str]:
+        return self._data
 
 
 with describe("Given dotty.core ChatBot.process_message") as self:
     with before.each:
-        self.chat_bot = ChatBot("Dotty", "@owner")
+        user_storage = FakeStorage()
+        users_registry = UserRegistry(user_storage)
+        self.chat_bot = ChatBot(name="Dotty", owner_identifier="@owner", users_registry=users_registry)
 
     with context("when a guest sends a message"):
         with it("should not respond at all"):
@@ -33,7 +50,13 @@ with describe("Given dotty.core ChatBot.process_message") as self:
             input_message = Message("usage", "@owner", "#group")
             expect(self.chat_bot.process_message(input_message)).to(
                 equal(
-                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after) [USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) [ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, anything after "set theme " will be the theme\n"Grant User " - Command to grant a member user status\n"Grant Admin " - Command to grant a member admin status\n"Grant Owner " - Command to grant a member owner status\n'
+                    'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all '
+                    'substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after) ['
+                    'USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) ['
+                    'ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, '
+                    'anything after "set theme " will be the theme\n"Grant User " - Command to grant a member user '
+                    'status\n"Grant Admin " - Command to grant a member admin status\n"Grant Owner " - Command to '
+                    "grant a member owner status\n"
                 )
             )
 
@@ -47,7 +70,12 @@ with describe("Given dotty.core ChatBot.process_message") as self:
                 input_message = Message("usage", "@admin", "#group")
                 expect(self.chat_bot.process_message(input_message)).to(
                     equal(
-                        'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message (after) [USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) [ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a theme, anything after "set theme " will be the theme\n"Grant User " - Command to grant a member user status\n'
+                        'These commands are available:\n"Usage" - List all commands and their usage\n"List" - List '
+                        'all substitutions\n" -> " - On the trigger (before) -> Dotty will respond with message ('
+                        'after) [USERS]\n" => " - On the trigger (before) => Dotty will respond with message (after) '
+                        '[ADMINS]\n"Theme" - This will give back the current theme\n"Set Theme " - This will set a '
+                        'theme, anything after "set theme " will be the theme\n"Grant User " - Command to grant a '
+                        "member user status\n"
                     )
                 )
 
