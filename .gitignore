@@ -5,4 +5,4 @@ dist/
 htmlcov/
 .coverage
 nohup.out
-./user_register.json
+user_register.json
