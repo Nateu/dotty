@@ -1,12 +1,11 @@
-import json
 import logging
 from json import dumps
 from typing import List
 
 import json_fix
 
+from dotty.profile_storage import ProfileStorage
 from dotty.security_level import SecurityLevel
-from dotty.storage import Storage
 
 
 class User:
@@ -28,16 +27,16 @@ class User:
 
 
 class UserRegistry:
-    def __init__(self, storage: Storage):
+    def __init__(self, profile_storage: ProfileStorage):
         self._storage_name = "user_register.json"
-        self._storage = storage
+        self._profile_storage = profile_storage
         self._all_users: List[User] = []
-        data = self._storage.retrieve_data(self._storage_name)
-        if data:
-            json_data = json.loads(data)
-            for user in json_data:
+        profiles = self._profile_storage.retrieve_profiles()
+        if profiles:
+            for profile in profiles:
+                security_level_value = int(profile["security_level"])
                 self._all_users.append(
-                    User(identifier=user["identifier"], security_level=SecurityLevel(user["security level"]))
+                    User(identifier=profile["identifier"], security_level=SecurityLevel(security_level_value))
                 )
 
     def register_user(self, identifier: str, role: SecurityLevel) -> None:
@@ -47,8 +46,7 @@ class UserRegistry:
             user.set_security_level(security_level=role)
         else:
             self._all_users.append(User(identifier=identifier, security_level=role))
-        json_data = dumps([user for user in self._all_users])
-        self._storage.store_in(data=json_data, storage_name=self._storage_name)
+        self._profile_storage.store_profiles(users=self._all_users)
 
     def is_registered_user(self, identifier: str) -> bool:
         return identifier in [user.get_user_identifier() for user in self._all_users]

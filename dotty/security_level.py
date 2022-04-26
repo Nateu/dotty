@@ -5,7 +5,7 @@ import json_fix
 
 
 @total_ordering
-class SecurityLevel(str, Enum):
+class SecurityLevel(Enum):
     OWNER = 9
     ADMIN = 7
     USER = 5

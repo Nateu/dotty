@@ -1,28 +1,31 @@
-from typing import Optional
+from typing import List
 
 from expects import equal, expect
 from mamba import before, context, describe, it
 
-from dotty.core import ChatBot, Message
-from dotty.storage import Storage
-from dotty.user import UserRegistry
+from dotty.core import ChatBot
+from dotty.message import Message
+from dotty.profile_storage import ProfileStorage
+from dotty.user import User, UserRegistry
 
 
-class FakeStorage(Storage):
+class FakeUserRegistry(UserRegistry):
     def __init__(self):
-        self._data: str = ""
+        self.users: List[User] = []
 
-    def store_in(self, data: str, storage_name: str):
-        self._data = data
+    def register_user(self, identifier, role):
+        self.users.append(User(identifier=identifier, security_level=role))
 
-    def retrieve_data(self, storage_name: str) -> Optional[str]:
-        return self._data
+    def is_registered_user(self, identifier):
+        return identifier in [user.get_user_identifier() for user in self.users]
+
+    def get_user(self, identifier):
+        return [user for user in self.users if user.get_user_identifier() == identifier].pop()
 
 
 with describe("Given dotty.core ChatBot.process_message") as self:
     with before.each:
-        user_storage = FakeStorage()
-        users_registry = UserRegistry(user_storage)
+        users_registry = FakeUserRegistry()
         self.chat_bot = ChatBot(name="Dotty", owner_identifier="@owner", users_registry=users_registry)
 
     with context("when a guest sends a message"):

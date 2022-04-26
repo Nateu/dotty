@@ -1,6 +1,6 @@
 .PHONY: default init bdd test format sort lint run
 
-default: test format sort lint
+default: test lint sort format
 
 init:
 	poetry install

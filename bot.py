@@ -1,4 +1,7 @@
-from dotty import ChatBot, Message, Storage, UserRegistry
+from dotty.core import ChatBot
+from dotty.message import Message
+from dotty.profile_storage import ProfileStorage
+from dotty.user import UserRegistry
 
 
 class Colors:
@@ -39,7 +42,7 @@ def bot_loop(the_bot: ChatBot) -> None:
 
 
 if __name__ == "__main__":
-    storage = Storage()
-    users_registry = UserRegistry(storage=storage)
+    profile_storage = ProfileStorage()
+    users_registry = UserRegistry(profile_storage=profile_storage)
     dotty_bot = ChatBot(name="Dotty", owner_identifier="Pascal", users_registry=users_registry)
     bot_loop(the_bot=dotty_bot)
