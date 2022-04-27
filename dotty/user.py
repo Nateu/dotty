@@ -35,9 +35,7 @@ class UserRegistry:
         if profiles:
             for profile in profiles:
                 security_level_value = int(profile["security_level"])
-                self._all_users.append(
-                    User(identifier=profile["identifier"], security_level=SecurityLevel(security_level_value))
-                )
+                self._all_users.append(User(identifier=profile["identifier"], security_level=SecurityLevel(security_level_value)))
 
     def register_user(self, identifier: str, role: SecurityLevel) -> None:
         logging.debug(f"Register user: {identifier}, {role}")

@@ -14,6 +14,4 @@ class DynamoStorage:
         return self._dyn_db_resource.Table(table_name)
 
     def _check_for_gsi(self, table, gsi_name: str):
-        return table.global_secondary_indexes or gsi_name not in [
-            gsi["IndexName"] for gsi in table.global_secondary_indexes
-        ]
+        return table.global_secondary_indexes or gsi_name not in [gsi["IndexName"] for gsi in table.global_secondary_indexes]

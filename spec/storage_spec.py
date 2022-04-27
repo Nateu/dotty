@@ -11,9 +11,7 @@ with describe("Given a Storage solution") as self:
         with it("should store the data in the storage"):
             with patch(
                 "builtins.open",
-                new=mock_open(
-                    read_data='[{"name": "A", "score": 5, "comment": "T"}, {"name": "B", "score": 7, "comment": "T"}]'
-                ),
+                new=mock_open(read_data='[{"name": "A", "score": 5, "comment": "T"}, {"name": "B", "score": 7, "comment": "T"}]'),
             ) as mocked_open:
                 Storage().store_in(data="[{'some': 'data'}]", storage_name="my_storage.json")
             mocked_open.return_value.write.assert_called_once_with("[{'some': 'data'}]")
