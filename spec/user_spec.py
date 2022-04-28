@@ -28,9 +28,3 @@ with describe("Given a user pascal with security level OWNER") as self:
         with it("should return a object with identifier = pascal and security level = 9"):
             my_user = User(identifier="pascal", security_level=SecurityLevel.OWNER)
             expect(dumps(my_user)).to(equal('{"identifier": "pascal", "security level": 9}'))
-
-# with describe("Given ") as self:
-#     with context("when get_user_identifier is called"):
-#         with it("should return 'pascal'"):
-#             my_user = User(identifier="pascal", security_level=SecurityLevel.OWNER)
-#             expect(my_user.get_user_identifier()).to(equal("pascal"))

@@ -2,6 +2,7 @@ from typing import List
 
 from dotty.command import Command, CommandRegistry
 from dotty.profile_storage import ProfileStorage
+from dotty.security_level import SecurityLevel
 from dotty.user import User
 from dotty.user_registry import UserRegistry
 
@@ -97,13 +98,13 @@ class FakeCommandRegistry(CommandRegistry):
 
 class FakeProfileStorage(ProfileStorage):
     def __init__(self):
-        self.retrieve_profiles_response = ""
+        self.all_profiles: List[User] = []
 
     def create_owner(self, identifier: str) -> None:
-        pass
+        self.all_profiles.append(User(identifier=identifier, security_level=SecurityLevel.OWNER))
 
     def store_profiles(self, users: List[User]) -> None:
-        pass
+        self.all_profiles = users
 
     def retrieve_profiles(self) -> List[User]:
-        return self.retrieve_profiles_response
+        return self.all_profiles
