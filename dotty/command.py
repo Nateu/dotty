@@ -1,9 +1,7 @@
-import logging
 from typing import List, Optional
 
 from dotty.command_identifier import CommandIdentifier
 from dotty.command_type import CommandType
-from dotty.message import Message
 from dotty.security_level import SecurityLevel
 
 
@@ -42,11 +40,10 @@ class StartsWithCommand(Command):
         super().__init__(identifier, trigger, description, security_level)
         self._type: CommandType = CommandType.STARTS_WITH
 
-    def has_match(self, message_body: str, user_security_level: SecurityLevel) -> bool:
+    def has_match(self, message: str, user_security_level: SecurityLevel) -> bool:
         if not self.has_clearance(user_security_level):
             return False
-        logging.debug(f"Starts with: [{self.get_trigger_lower_case()}] > [{message_body.casefold()}]")
-        return message_body.casefold().startswith(self.get_trigger_lower_case())
+        return message.casefold().startswith(self.get_trigger_lower_case())
 
 
 class ContainsCommand(Command):
@@ -57,7 +54,6 @@ class ContainsCommand(Command):
     def has_match(self, message_body: str, user_security_level: SecurityLevel) -> bool:
         if not self.has_clearance(user_security_level):
             return False
-        logging.debug(f"Checking: [{self.get_trigger_lower_case()}] in [{message_body.casefold()}]")
         return self.get_trigger_lower_case() in message_body.casefold()
 
 
@@ -69,10 +65,6 @@ class ExactCommand(Command):
     def has_match(self, message_body: str, user_security_level: SecurityLevel) -> bool:
         if not self.has_clearance(user_security_level):
             return False
-        logging.debug(
-            f"Comparing: [{self.get_trigger_lower_case()}] and [{message_body.casefold()}] "
-            f"{self.get_trigger_lower_case() == message_body.casefold()}"
-        )
         return self.get_trigger_lower_case() == message_body.casefold()
 
 
@@ -85,10 +77,6 @@ class SubstitutionCommand(Command):
     def has_match(self, message_body: str, user_security_level: SecurityLevel) -> bool:
         if not self.has_clearance(user_security_level):
             return False
-        logging.debug(
-            f"Comparing: [{self.get_trigger_lower_case()}] and [{message_body.casefold()}] "
-            f"{self.get_trigger_lower_case() == message_body.casefold()} "
-        )
         return self.get_trigger_lower_case() == message_body.casefold()
 
     def __repr__(self):
@@ -178,12 +166,18 @@ class CommandRegistry:
                 SecurityLevel.ADMIN,
             )
         )
+        self._all_commands.append(
+            ExactCommand(
+                CommandIdentifier.LIST_USERS,
+                "User List",
+                "List all known Users",
+                SecurityLevel.ADMIN,
+            )
+        )
 
-    def get_matching_command(self, message: Message, user_security_level: SecurityLevel):
-        logging.debug(f"User: {message.sent_by}, {user_security_level}")
+    def get_matching_command(self, message: str, user_security_level: SecurityLevel) -> Optional[Command]:
         for command in self._all_commands:
-            logging.debug(f"Checking Command: {command.get_trigger()}")
-            if command.has_match(message.body, user_security_level):
+            if command.has_match(message, user_security_level):
                 return command
 
     def get_commands_string(self, user_security_level: SecurityLevel) -> str:

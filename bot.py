@@ -1,3 +1,4 @@
+from dotty.command import CommandRegistry
 from dotty.core import ChatBot
 from dotty.message import Message
 from dotty.profile_storage import ProfileStorage
@@ -28,7 +29,7 @@ def bot_loop(the_bot: ChatBot) -> None:
     group: str = "Main"
     user: str = "Pascal"
 
-    respond("Hello! I'm a bot named Dotty")
+    respond(f"Hello! My name is: {the_bot._name}")
     while not exit_loop:
         console_input: str = str(input(Colors.CYAN + f"{user} @ [{group}] : " + Colors.ENDC))
         if console_input.casefold() == "bye":
@@ -42,7 +43,9 @@ def bot_loop(the_bot: ChatBot) -> None:
 
 
 if __name__ == "__main__":
+    bot_name = "Dotty bot"
     profile_storage = ProfileStorage()
     users_registry = UserRegistry(profile_storage=profile_storage)
-    dotty_bot = ChatBot(name="Dotty", owner_identifier="Pascal", users_registry=users_registry)
+    command_registry = CommandRegistry(bot_name=bot_name)
+    dotty_bot = ChatBot(name=bot_name, owner_identifier="Pascal", users_registry=users_registry, command_registry=command_registry)
     bot_loop(the_bot=dotty_bot)

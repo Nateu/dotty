@@ -1,5 +1,3 @@
-import logging
-from json import dumps
 from typing import List
 
 import json_fix
@@ -38,7 +36,6 @@ class UserRegistry:
                 self._all_users.append(User(identifier=profile["identifier"], security_level=SecurityLevel(security_level_value)))
 
     def register_user(self, identifier: str, role: SecurityLevel) -> None:
-        logging.debug(f"Register user: {identifier}, {role}")
         if self.is_registered_user(identifier=identifier):
             user = self.get_user(identifier=identifier)
             user.set_security_level(security_level=role)
@@ -51,3 +48,6 @@ class UserRegistry:
 
     def get_user(self, identifier: str) -> User:
         return [user for user in self._all_users if user.get_user_identifier() == identifier].pop()
+
+    def get_user_listing(self):
+        return ", ".join([f"{user.get_user_identifier()}: {user.get_user_clearance_level().name}" for user in self._all_users])

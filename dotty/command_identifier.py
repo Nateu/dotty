@@ -5,6 +5,7 @@ class CommandIdentifier(Enum):
     LIST_COMMANDS = auto()
     SET_THEME = auto()
     GET_THEME = auto()
+    LIST_USERS = auto()
     SET_USER_SUBSTITUTION = auto()
     SET_ADMIN_SUBSTITUTION = auto()
     LIST_SUBSTITUTIONS = auto()

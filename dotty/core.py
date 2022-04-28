@@ -1,7 +1,6 @@
-import logging
 from typing import Optional
 
-from dotty.command import Command, CommandRegistry, SubstitutionCommand
+from dotty.command import Command, CommandRegistry
 from dotty.command_identifier import CommandIdentifier
 from dotty.message import Message
 from dotty.security_level import SecurityLevel
@@ -15,13 +14,11 @@ class ChatBot:
         self._users_registry = users_registry
         self._users_registry.register_user(owner_identifier, SecurityLevel.OWNER)
         self._command_registry = command_registry
-        self._command_registry.set_bot_name(self._name)
 
     def process_message(self, message: Message) -> str:
         user_security_level = self._get_user_security_level(message.sent_by)
-        command = self._command_registry.get_matching_command(message, user_security_level)
+        command = self._command_registry.get_matching_command(message.body, user_security_level)
         if command:
-            logging.debug(f"Found a match: {command.get_trigger_lower_case()}")
             return self._process_command(command, message, user_security_level)
 
     def _get_user_security_level(self, user_identifier):
@@ -43,6 +40,9 @@ class ChatBot:
                 return self._list_substitutions(user_security_level=user_security_level)
             case CommandIdentifier.GET_SUBSTITUTION:
                 return self._get_substitution(command=command)
+            # USERS
+            case CommandIdentifier.LIST_USERS:
+                return self._list_users()
             # THEME
             case CommandIdentifier.SET_THEME:
                 return self._set_theme(command=command, message_body=message.body)
@@ -66,9 +66,11 @@ class ChatBot:
             case _:
                 return
 
+    def _list_users(self):
+        return f"The current users\n" f"{self._users_registry.get_user_listing()}"
+
     def _set_substitution(self, command: Command, message_body: str, security_level: SecurityLevel) -> Optional[str]:
         trigger, substitution = message_body.split(command.get_trigger())
-        logging.debug(f"Set substitution {trigger}")
         new_command = self._command_registry.register_substitution(
             trigger=trigger, substitution=substitution, security_level=security_level
         )
@@ -77,25 +79,20 @@ class ChatBot:
         return f'When you say: "{new_command.get_trigger()}", I say: {new_command}'
 
     def _get_substitution(self, command: Command) -> str:
-        logging.debug(f"Get substitution: {command}")
         return str(command)
 
     def _get_theme(self) -> str:
-        logging.debug(f"Get theme {self._theme}")
         return self._theme
 
     def _set_theme(self, command: Command, message_body: str) -> str:
         self._theme = message_body[len(command.get_trigger()) :]
-        logging.debug(f"Set theme: {self._theme}")
         return f"Theme set to: {self._theme}"
 
     def _list_substitutions(self, user_security_level: SecurityLevel) -> str:
-        logging.debug("List all substitutions")
         substitutions_string = self._command_registry.get_substitution_listing(user_security_level)
         return f"These substitutions are set: {substitutions_string}"
 
     def _list_commands(self, user_security_level: SecurityLevel) -> str:
-        logging.debug("List commands")
         commands_string = self._command_registry.get_commands_string(user_security_level=user_security_level)
         return f"These commands are available:\n{commands_string}"
 
