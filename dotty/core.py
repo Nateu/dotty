@@ -4,7 +4,7 @@ from dotty.command import Command, CommandRegistry
 from dotty.command_identifier import CommandIdentifier
 from dotty.message import Message
 from dotty.security_level import SecurityLevel
-from dotty.user import UserRegistry
+from dotty.user_registry import UserRegistry
 
 
 class ChatBot:

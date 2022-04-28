@@ -2,7 +2,7 @@ from dotty.command import CommandRegistry
 from dotty.core import ChatBot
 from dotty.message import Message
 from dotty.profile_storage import ProfileStorage
-from dotty.user import UserRegistry
+from dotty.user_registry import UserRegistry
 
 
 class Colors:

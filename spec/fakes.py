@@ -1,5 +1,9 @@
+from typing import List
+
 from dotty.command import Command, CommandRegistry
-from dotty.user import User, UserRegistry
+from dotty.profile_storage import ProfileStorage
+from dotty.user import User
+from dotty.user_registry import UserRegistry
 
 
 class FakeUser(User):
@@ -89,3 +93,17 @@ class FakeCommandRegistry(CommandRegistry):
 
     def register_substitution(self, trigger, substitution, security_level):
         return self.register_substitution_response
+
+
+class FakeProfileStorage(ProfileStorage):
+    def __init__(self):
+        self.retrieve_profiles_response = ""
+
+    def create_owner(self, identifier: str) -> None:
+        pass
+
+    def store_profiles(self, users: List[User]) -> None:
+        pass
+
+    def retrieve_profiles(self) -> List[User]:
+        return self.retrieve_profiles_response

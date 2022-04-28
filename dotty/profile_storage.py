@@ -4,12 +4,31 @@ from boto3.dynamodb.conditions import Key
 
 from dotty.dynamo_storage import DynamoStorage
 from dotty.security_level import SecurityLevel
+from dotty.user import User
 
 
 class ProfileStorage(DynamoStorage):
     def __init__(self):
         super().__init__()
         self._table = self._get_table_profiles()
+
+    def create_owner(self, identifier: str) -> None:
+        owners = self._get_owners()
+        if not owners or identifier not in [owner["identifier"] for owner in owners["Items"]]:
+            self._store_profile(identifier=identifier, security_level=SecurityLevel.OWNER)
+
+    def store_profiles(self, users: List[User]) -> None:
+        for user in users:
+            self._store_profile(identifier=user.get_user_identifier(), security_level=user.get_user_clearance_level())
+
+    def retrieve_profiles(self) -> List[User]:
+        response: List[User] = []
+        stored_profiles = self._table.scan(AttributesToGet=["identifier", "security_level"], Limit=100)
+        if stored_profiles:
+            for profile in stored_profiles["Items"]:
+                security_level_value = int(profile["security_level"])
+                response.append(User(identifier=profile["identifier"], security_level=SecurityLevel(security_level_value)))
+        return response
 
     def _get_table_profiles(self):
         if self._table_exists(table_name="profiles"):
@@ -53,31 +72,13 @@ class ProfileStorage(DynamoStorage):
             ],
         )
 
-    def create_owner(self, identifier: str):
-        owners = self._get_owners()
-        if not owners or identifier not in [owner["identifier"] for owner in owners["Items"]]:
-            self._store_profile(identifier=identifier, security_level=SecurityLevel.OWNER)
-
     def _get_owners(self):
         return self._table.query(IndexName="gsi_security_level", KeyConditionExpression=Key("security_level").eq(9))
 
-    def retrieve_profiles(self):
-        response = self._table.scan(AttributesToGet=["identifier", "security_level"], Limit=100)
-        return response["Items"]
-
-    def _store_profile(self, identifier: str, security_level: SecurityLevel):
+    def _store_profile(self, identifier: str, security_level: SecurityLevel) -> None:
         self._table.put_item(
             Item={
                 "identifier": identifier,
                 "security_level": security_level.value,
             }
         )
-
-    def store_profiles(self, users):
-        for user in users:
-            self._store_profile(identifier=user.get_user_identifier(), security_level=user.get_user_clearance_level())
-
-
-if __name__ == "__main__":
-    profile_storage = ProfileStorage()
-    profile_storage.create_owner("@pascal")
