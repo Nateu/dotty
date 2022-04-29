@@ -1,6 +1,7 @@
 from typing import List
 
-from dotty.command import Command, CommandRegistry
+from dotty.command import Command
+from dotty.command_registry import CommandRegistry
 from dotty.profile_storage import ProfileStorage
 from dotty.security_level import SecurityLevel
 from dotty.user import User

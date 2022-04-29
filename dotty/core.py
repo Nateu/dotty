@@ -1,7 +1,8 @@
 from typing import Optional
 
-from dotty.command import Command, CommandRegistry
+from dotty.command import Command
 from dotty.command_identifier import CommandIdentifier
+from dotty.command_registry import CommandRegistry
 from dotty.message import Message
 from dotty.security_level import SecurityLevel
 from dotty.user_registry import UserRegistry
