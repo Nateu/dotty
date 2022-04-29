@@ -1,6 +1,6 @@
 from json import dumps
 
-from expects import equal, expect
+from expects import equal, expect, raise_error
 from mamba import context, describe, it
 
 from dotty.security_level import SecurityLevel
@@ -42,3 +42,7 @@ with describe("Given a Security Level") as self:
     with context("when the level UNKNOWN is serialized"):
         with it("should have be represented in the number 1"):
             expect(dumps(SecurityLevel.UNKNOWN)).to(equal("1"))
+
+    with context("when you a Security Level to something else with >"):
+        with it("should return NotImplemented"):
+            expect(lambda: SecurityLevel.OWNER > "some string").to(raise_error(TypeError))
