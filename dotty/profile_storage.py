@@ -64,7 +64,7 @@ class ProfileStorage(DynamoStorage):
                         "IndexName": "gsi_security_level",
                         "KeySchema": [
                             {"AttributeName": "security_level", "KeyType": "HASH"},
-                            {"AttributeName": "identifier", "KeyType": "RANGE"}
+                            {"AttributeName": "identifier", "KeyType": "RANGE"},
                         ],
                         "Projection": {"ProjectionType": "ALL"},
                         "ProvisionedThroughput": {"ReadCapacityUnits": 1, "WriteCapacityUnits": 1},
