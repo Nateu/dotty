@@ -460,3 +460,29 @@ with describe("Given the dotty ChatBot") as self:
                 input_message = Message("Grant Admin @admin", "@owner", "#group")
                 # Assertion
                 expect(self.chat_bot.process_message(input_message)).to(equal("Rights revoked"))
+
+        with context("and they list all users"):
+            with it("should list all users"):
+                # Set Up
+                self.command_registry = FakeCommandRegistry()
+                self.command_registry.get_matching_command_response = FakeCommand()
+                self.command_registry.get_matching_command_response.identifier = CommandIdentifier.LIST_USERS
+                self.command_registry.get_matching_command_response.get_trigger_response = "Users"
+                self.command_registry.get_matching_command_response.get_security_level_response = SecurityLevel.OWNER
+                self.command_registry.get_matching_command_response.has_match_response = True
+                self.users_registry = FakeUserRegistry()
+                self.users_registry.is_registered_user_outcome = True
+                self.users_registry.get_user_response = FakeUser()
+                self.users_registry.get_user_response.get_user_clearance_level_response = SecurityLevel.OWNER
+                self.users_registry.get_user_listing_response = "Pascal"
+
+                self.chat_bot = ChatBot(
+                    name="Dotty",
+                    owner_identifier="@owner",
+                    users_registry=self.users_registry,
+                    command_registry=self.command_registry,
+                )
+                # Run
+                input_message = Message("Users", "@owner", "#group")
+                # Assertion
+                expect(self.chat_bot.process_message(input_message)).to(equal("The current users\nPascal"))

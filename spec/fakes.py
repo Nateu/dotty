@@ -27,6 +27,7 @@ class FakeUserRegistry(UserRegistry):
     def __init__(self):
         self.is_registered_user_outcome = True
         self.get_user_response = ""
+        self.get_user_listing_response = ""
 
     def register_user(self, identifier, role):
         pass
@@ -36,6 +37,9 @@ class FakeUserRegistry(UserRegistry):
 
     def get_user(self, identifier):
         return self.get_user_response
+
+    def get_user_listing(self):
+        return self.get_user_listing_response
 
 
 class FakeCommand(Command):

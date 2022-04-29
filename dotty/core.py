@@ -8,6 +8,10 @@ from dotty.security_level import SecurityLevel
 from dotty.user_registry import UserRegistry
 
 
+def _get_substitution(command: Command) -> str:
+    return str(command)
+
+
 class ChatBot:
     def __init__(self, name: str, owner_identifier: str, users_registry: UserRegistry, command_registry: CommandRegistry):
         self._name: str = name
@@ -40,7 +44,7 @@ class ChatBot:
             case CommandIdentifier.LIST_SUBSTITUTIONS:
                 return self._list_substitutions(user_security_level=user_security_level)
             case CommandIdentifier.GET_SUBSTITUTION:
-                return self._get_substitution(command=command)
+                return _get_substitution(command=command)
             # USERS
             case CommandIdentifier.LIST_USERS:
                 return self._list_users()
@@ -78,9 +82,6 @@ class ChatBot:
         if not new_command:
             return
         return f'When you say: "{new_command.get_trigger()}", I say: {new_command}'
-
-    def _get_substitution(self, command: Command) -> str:
-        return str(command)
 
     def _get_theme(self) -> str:
         return self._theme
