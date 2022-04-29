@@ -20,6 +20,10 @@ class ChatBot:
         self._users_registry.register_user(owner_identifier, SecurityLevel.OWNER)
         self._command_registry = command_registry
 
+    def update_user(self, user_jid, role: SecurityLevel = SecurityLevel.UNKNOWN):
+        if not self._users_registry.is_registered_user(identifier=user_jid):
+            self._users_registry.register_user(identifier=user_jid, role=role)
+
     def process_message(self, message: Message) -> str:
         user_security_level = self._get_user_security_level(message.sent_by)
         command = self._command_registry.get_matching_command(message.body, user_security_level)
