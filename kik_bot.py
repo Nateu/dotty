@@ -1,4 +1,4 @@
-from json import loads
+from json import dumps
 
 from kik_unofficial.callbacks import KikClientCallback
 from kik_unofficial.client import KikClient
@@ -18,57 +18,8 @@ from dotty.command_registry import CommandRegistry
 from dotty.core import ChatBot
 from dotty.message import Message
 from dotty.profile_storage import ProfileStorage
+from dotty.statics import get_config
 from dotty.user_registry import UserRegistry
-
-
-friends = {}
-client = None
-bot_name = "Dotty bot"
-
-
-def jid_to_username(jid):
-    return jid.split("@")[0][0:-4]
-
-
-def get_kik_account():
-    with open("kik_account.json") as account_file:
-        return loads(account_file.read())
-
-
-def ago(timestamp: int) -> str:
-    from datetime import datetime
-
-    then = datetime.utcfromtimestamp(int(timestamp) / 1000)
-    now = datetime.utcnow()
-    diff = now - then
-    second_diff = diff.seconds
-    day_diff = diff.days
-
-    if day_diff < 0:
-        return ""
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return "just now"
-        if second_diff < 60:
-            return str(second_diff) + " seconds ago"
-        if second_diff < 120:
-            return "a minute ago"
-        if second_diff < 3600:
-            return str(second_diff / 60) + " minutes ago"
-        if second_diff < 7200:
-            return "an hour ago"
-        if second_diff < 86400:
-            return str(second_diff / 3600) + " hours ago"
-    if day_diff == 1:
-        return "Yesterday"
-    if day_diff < 7:
-        return str(day_diff) + " days ago"
-    if day_diff < 31:
-        return str(day_diff / 7) + " weeks ago"
-    if day_diff < 365:
-        return str(day_diff / 30) + " months ago"
-    return str(day_diff / 365) + " years ago"
 
 
 class InteractiveChatClient(KikClientCallback):
@@ -76,10 +27,25 @@ class InteractiveChatClient(KikClientCallback):
         self.chat_bot = chat_bot
         self._groups = []
         self._users = []
+        self._user_info = []
+        self.client = None
+        self.exit = False
+
+    def update_users(self):
+        users = [u["user_jid"] for u in self._users]
+        self.client.xiphias_get_users(users)
+
+    def on_xiphias_get_users_response(self, response):
+        self._user_info = response.users
+        # for u in self._user_info:
+        #     print(dumps(u))
+
+    def set_client(self, client):
+        self.client = client
 
     def on_authenticated(self):
-        print(f"Authenticated as {client.username} ({client.kik_node})")
-        client.request_roster()
+        print(f"Authenticated as {self.client.username} ({self.client.kik_node})")
+        self.client.request_roster()
 
     def _add_user(self, user: User):
         self._users.append({"display_name": user.display_name, "username": user.username, "user_jid": user.jid})
@@ -97,59 +63,75 @@ class InteractiveChatClient(KikClientCallback):
                     self._add_group_member(member)
             elif peer.__class__ == User:
                 self._add_user(peer)
+        self.update_users()
 
     def on_group_message_received(self, response: IncomingGroupChatMessage):
         incoming_message = Message(body=response.body, sent_by=response.from_jid, sent_in=response.group_jid)
         answer = self.chat_bot.process_message(message=incoming_message)
-        if answer and client:
-            client.send_chat_message(peer_jid=response.group_jid, message=answer)
-        client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id, group_jid=response.group_jid)
+        if answer and self.client:
+            self.client.send_chat_message(peer_jid=response.group_jid, message=answer)
+        self.client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id, group_jid=response.group_jid)
 
     def on_connection_failed(self, response: ConnectionFailedResponse):
-        print("Connection failed")
+        print(f"Connection failed: {response.message}")
 
     def on_video_received(self, response: IncomingVideoMessage):
         print(f"Video sent on {response.metadata.timestamp} url: {response.video_url}")
-        client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id, group_jid=response.group_jid)
+        self.client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id, group_jid=response.group_jid)
 
     def on_image_received(self, response: IncomingImageMessage):
         print(f"Image sent on {response.metadata.timestamp} url: {response.image_url}")
-        client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id, group_jid=response.group_jid)
+        self.client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id, group_jid=response.group_jid)
 
     def on_chat_message_received(self, response: IncomingChatMessage):
         print(f"DM sent on {response.metadata.timestamp} by: {response.from_jid}")
-        client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id)
+        self.client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id)
+        config = get_config()
+        if response.body.casefold() == "please stop running" and response.from_jid == config["owner"]["jid"]:
+            self.exit = True
 
     def on_status_message_received(self, response: IncomingStatusResponse):
         print(f"Status {response.status} sent on {response.metadata.timestamp} by: {response.from_jid}")
-        client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id)
+        self.client.send_read_receipt(peer_jid=response.from_jid, receipt_message_id=response.message_id)
 
     def on_group_status_received(self, response: IncomingGroupStatus):
         print(f"Status {response.status} sent on {response.metadata.timestamp} in: {response.group_jid}")
 
 
+class BotSetUp:
+    def __init__(self, bot_name: str):
+        self.exit_loop = False
+        self.config = get_config()
+        self.profile_storage = ProfileStorage()
+        self.users_registry = UserRegistry(profile_storage=self.profile_storage)
+        self.command_registry = CommandRegistry(bot_name=bot_name)
+        self.dotty_bot = ChatBot(
+            name=bot_name,
+            owner_identifier=self.config["owner"]["jid"],
+            users_registry=self.users_registry,
+            command_registry=self.command_registry,
+        )
+
+        self.callback = InteractiveChatClient(self.dotty_bot)
+        self.client = KikClient(
+            callback=self.callback, kik_username=self.config["bot"]["account"], kik_password=self.config["bot"]["password"]
+        )
+        self.callback.set_client(self.client)
+
+    def bot_loop(self):
+        while not self.exit_loop:
+            if self.callback.exit:
+                self.exit_loop = True
+            if input().casefold() == "bye":
+                self.exit_loop = True
+
+    def stop_session(self):
+        self.exit_loop = True
+        self.client.loop.stop()
+        self.client.disconnect()
+
+
 if __name__ == "__main__":
-    kik_account = get_kik_account()
-    profile_storage = ProfileStorage()
-    users_registry = UserRegistry(profile_storage=profile_storage)
-    command_registry = CommandRegistry(bot_name=bot_name)
-    dotty_bot = ChatBot(
-        name=bot_name, owner_identifier=kik_account["owner"]["jid"], users_registry=users_registry, command_registry=command_registry
-    )
-
-    callback = InteractiveChatClient(dotty_bot)
-    client = KikClient(
-        callback=callback,
-        kik_username=kik_account["bot"]["account"],
-        kik_password=kik_account["bot"]["password"],
-        kik_node=kik_account["bot"]["kik_node"],
-    )
-
-    exit_loop = False
-    while not exit_loop:
-        message = input()
-        if message.casefold() == "bye":
-            exit_loop = True
-
-    client.loop.stop()
-    client.disconnect()
+    bot_set_up = BotSetUp(bot_name="Dotty bot")
+    bot_set_up.bot_loop()
+    bot_set_up.stop_session()

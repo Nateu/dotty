@@ -17,6 +17,9 @@ class ProfileStorage(DynamoStorage):
         if not owners or identifier not in [owner["identifier"] for owner in owners["Items"]]:
             self._store_profile(identifier=identifier, security_level=SecurityLevel.OWNER)
 
+    def store_profile(self, user: User, item=None) -> None:
+        self._store_profile(identifier=user.get_user_identifier(), security_level=user.get_user_clearance_level(), item=item)
+
     def store_profiles(self, users: List[User]) -> None:
         for user in users:
             self._store_profile(identifier=user.get_user_identifier(), security_level=user.get_user_clearance_level())
@@ -76,10 +79,10 @@ class ProfileStorage(DynamoStorage):
     def _get_owners(self):
         return self._table.query(IndexName="gsi_security_level", KeyConditionExpression=Key("security_level").eq(9))
 
-    def _store_profile(self, identifier: str, security_level: SecurityLevel) -> None:
-        self._table.put_item(
-            Item={
+    def _store_profile(self, identifier: str, security_level: SecurityLevel, item=None) -> None:
+        if not item:
+            item = {
                 "identifier": identifier,
                 "security_level": security_level.value,
             }
-        )
+        self._table.put_item(Item=item)

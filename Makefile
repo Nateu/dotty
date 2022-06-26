@@ -1,4 +1,4 @@
-.PHONY: default init bdd test format sort lint run
+.PHONY: default init bdd test format sort lint run kik
 
 default: test lint sort format
 
@@ -22,3 +22,6 @@ sort:
 
 run:
 	poetry run python bot.py
+
+kik:
+	python kik_bot.py

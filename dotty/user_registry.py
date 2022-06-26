@@ -2,6 +2,7 @@ from typing import List
 
 from dotty.profile_storage import ProfileStorage
 from dotty.security_level import SecurityLevel
+from dotty.statics import jid_to_username
 from dotty.user import User
 
 
@@ -25,4 +26,6 @@ class UserRegistry:
         return [user for user in self._all_users if user.get_user_identifier() == identifier].pop()
 
     def get_user_listing(self):
-        return ", ".join([f"{user.get_user_identifier()}: {user.get_user_clearance_level().name}" for user in self._all_users])
+        return "\n".join(
+            [f"{jid_to_username(user.get_user_identifier())}: {user.get_user_clearance_level().name}" for user in self._all_users]
+        )
