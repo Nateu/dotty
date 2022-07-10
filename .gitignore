@@ -3,8 +3,9 @@
 __pycache__/
 dist/
 htmlcov/
+html/
 .coverage
 nohup.out
 user_register.json
-/config.json
-/.mutmut-cache
+config.json
+.mutmut-cache
