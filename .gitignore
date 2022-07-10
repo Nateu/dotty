@@ -7,3 +7,4 @@ htmlcov/
 nohup.out
 user_register.json
 /config.json
+/.mutmut-cache

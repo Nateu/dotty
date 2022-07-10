@@ -22,6 +22,9 @@ from dotty.statics import get_config
 from dotty.user_registry import UserRegistry
 
 
+# from kik_unofficial.datatypes.xmpp.xiphias import UsersResponse, UsersByAliasResponse
+
+
 class InteractiveChatClient(KikClientCallback):
     def __init__(self, chat_bot: ChatBot):
         self.chat_bot = chat_bot
@@ -35,10 +38,14 @@ class InteractiveChatClient(KikClientCallback):
         users = [u["user_jid"] for u in self._users]
         self.client.xiphias_get_users(users)
 
-    def on_xiphias_get_users_response(self, response):
-        self._user_info = response.users
-        # for u in self._user_info:
-        #     print(dumps(u))
+    # def on_xiphias_get_users_response(self, response):
+    #     pass
+    #     print(response.users)
+    #
+    # def on_xiphias_get_users_response(self, response):
+    #     self._user_info = response.users
+    #     for u in self._user_info:
+    #         print(dumps(u))
 
     def set_client(self, client):
         self.client = client

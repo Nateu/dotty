@@ -17,6 +17,13 @@ mamba = "^0.11.2"
 coverage = "^6.1.2"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
+mutmut = "^2.4.0"
+pytest = "^7.1.2"
+
+[tool.mutmut]
+paths_to_mutate="dotty/"
+tests_dir="tests/"
+# runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
 
 [tool.black]
 line-length = 140

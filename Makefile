@@ -1,24 +1,30 @@
-.PHONY: default init bdd test format sort lint run kik
+.PHONY: default init serve pytest format lint sort run kik
 
-default: test lint sort format
+default: pytest mut lint sort format
 
 init:
 	poetry install
 
 serve:
-	bash ./scripts/serve.sh
+	bash ./scripts/http_server.sh
 
-test:
-	bash ./scripts/mamba.sh
+pytest:
+	bash ./scripts/coverage_pytest.sh
+
+bdd:
+	bash ./scripts/coverage_mamba.sh
+
+mut:
+	bash ./scripts/mutmut.sh
 
 format:
-	bash ./scripts/format.sh
+	bash ./scripts/black.sh
 
 lint:
-	bash ./scripts/lint.sh
+	bash ./scripts/flake8.sh
 
 sort:
-	bash ./scripts/sort.sh
+	bash ./scripts/isort.sh
 
 run:
 	poetry run python bot.py
