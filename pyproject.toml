@@ -22,8 +22,8 @@ pytest = "^7.1.2"
 
 [tool.mutmut]
 paths_to_mutate="dotty/"
-tests_dir="tests/"
-# runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
+tests_dir="spec/"
+runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
 
 [tool.black]
 line-length = 140
