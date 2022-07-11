@@ -5,18 +5,18 @@ description = ""
 authors = ["nateu"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-json-fix = "^0.1.3"
 boto3 = "^1.22.0"
+json-fix = "^0.1.3"
 kik-unofficial = {path = "../kik-bot-api-unofficial"}
+python = "^3.10"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
-expects = "^0.9.0"
-mamba = "^0.11.2"
 coverage = "^6.1.2"
+expects = "^0.9.0"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
+mamba = "^0.11.2"
 mutmut = "^2.4.0"
 pytest = "^7.1.2"
 
@@ -30,12 +30,10 @@ source = ["./bot/"]
 
 [tool.mutmut]
 paths_to_mutate="bot/"
-tests_dir="spec/"
 runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
+tests_dir="spec/"
 
 [tool.black]
-line-length = 140
-target-version=["py310"]
 exclude = '''
 (
   /(
@@ -53,15 +51,16 @@ exclude = '''
   )/
 )
 '''
+line-length = 140
+target-version=["py310"]
 
 [tool.isort]
-line_length = 120
 combine_as_imports = true
-balanced_wrapping = true
-lines_after_imports = 2
 include_trailing_comma = true
-multi_line_output = 5
+line_length = 140
+lines_after_imports = 2
+multi_line_output = 3
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
