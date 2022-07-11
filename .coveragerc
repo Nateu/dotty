@@ -1,5 +1,0 @@
-# .coveragerc to control coverage.py
-[run]
-branch = True
-source = ./dotty/
-omit = ./dotty/__init__.py

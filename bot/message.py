@@ -7,4 +7,4 @@ class Message:
     def __eq__(self, other):
         if isinstance(other, Message):
             return self.body == other.body and self.sent_by == other.sent_by and self.sent_in == other.sent_in
-        return False
+        raise TypeError

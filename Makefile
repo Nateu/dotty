@@ -1,6 +1,6 @@
 .PHONY: default init serve pytest format lint sort run kik
 
-default: pytest mut lint sort format
+default: bdd mut lint sort format
 
 init:
 	poetry install
