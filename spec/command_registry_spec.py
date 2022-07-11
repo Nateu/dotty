@@ -1,8 +1,8 @@
 from expects import equal, expect
 from mamba import before, context, describe, it
 
-from dotty.command_registry import CommandRegistry
-from dotty.security_level import SecurityLevel
+from bot.command_registry import CommandRegistry
+from bot.security_level import SecurityLevel
 
 
 with describe("Given a command registry") as self:

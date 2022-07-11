@@ -1,8 +1,8 @@
 from typing import List, Optional
 
-from dotty.command import Command, ContainsCommand, ExactCommand, StartsWithCommand, SubstitutionCommand
-from dotty.command_identifier import CommandIdentifier
-from dotty.security_level import SecurityLevel
+from bot.command import Command, ContainsCommand, ExactCommand, StartsWithCommand, SubstitutionCommand
+from bot.command_identifier import CommandIdentifier
+from bot.security_level import SecurityLevel
 
 
 class CommandRegistry:

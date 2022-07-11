@@ -3,7 +3,7 @@ from json import dumps
 from expects import equal, expect, raise_error
 from mamba import context, describe, it
 
-from dotty.security_level import SecurityLevel
+from bot.security_level import SecurityLevel
 
 
 with describe("Given a Security Level") as self:

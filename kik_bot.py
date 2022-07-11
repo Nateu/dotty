@@ -12,12 +12,12 @@ from kik_unofficial.datatypes.xmpp.chatting import (
 from kik_unofficial.datatypes.xmpp.login import ConnectionFailedResponse
 from kik_unofficial.datatypes.xmpp.roster import FetchRosterResponse
 
-from dotty.chat_bot import ChatBot
-from dotty.command_registry import CommandRegistry
-from dotty.message import Message
-from dotty.profile_storage import ProfileStorage
-from dotty.statics import get_config
-from dotty.user_registry import UserRegistry
+from bot.chat_bot import ChatBot
+from bot.command_registry import CommandRegistry
+from bot.message import Message
+from bot.profile_storage import ProfileStorage
+from bot.statics import get_config
+from bot.user_registry import UserRegistry
 
 
 # from kik_unofficial.datatypes.xmpp.xiphias import UsersResponse, UsersByAliasResponse

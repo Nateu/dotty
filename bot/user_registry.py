@@ -1,9 +1,9 @@
 from typing import List
 
-from dotty.profile_storage import ProfileStorage
-from dotty.security_level import SecurityLevel
-from dotty.statics import jid_to_username
-from dotty.user import User
+from bot.profile_storage import ProfileStorage
+from bot.security_level import SecurityLevel
+from bot.statics import jid_to_username
+from bot.user import User
 
 
 class UserRegistry:

@@ -21,7 +21,7 @@ mutmut = "^2.4.0"
 pytest = "^7.1.2"
 
 [tool.mutmut]
-paths_to_mutate="dotty/"
+paths_to_mutate="bot/"
 tests_dir="spec/"
 runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
 

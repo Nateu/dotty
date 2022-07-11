@@ -1,6 +1,6 @@
-from dotty.command_identifier import CommandIdentifier
-from dotty.command_type import CommandType
-from dotty.security_level import SecurityLevel
+from bot.command_identifier import CommandIdentifier
+from bot.command_type import CommandType
+from bot.security_level import SecurityLevel
 
 
 class Command:

@@ -1,6 +1,6 @@
 import json_fix  # noqa:F401
 
-from dotty.security_level import SecurityLevel
+from bot.security_level import SecurityLevel
 
 
 class User:

@@ -1,11 +1,11 @@
 from typing import Optional
 
-from dotty.command import Command
-from dotty.command_identifier import CommandIdentifier
-from dotty.command_registry import CommandRegistry
-from dotty.message import Message
-from dotty.security_level import SecurityLevel
-from dotty.user_registry import UserRegistry
+from bot.command import Command
+from bot.command_identifier import CommandIdentifier
+from bot.command_registry import CommandRegistry
+from bot.message import Message
+from bot.security_level import SecurityLevel
+from bot.user_registry import UserRegistry
 
 
 class ChatBot:

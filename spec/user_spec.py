@@ -3,8 +3,8 @@ from json import dumps
 from expects import equal, expect
 from mamba import context, describe, it
 
-from dotty.security_level import SecurityLevel
-from dotty.user import User
+from bot.security_level import SecurityLevel
+from bot.user import User
 
 
 with describe("Given a user pascal with security level OWNER") as self:

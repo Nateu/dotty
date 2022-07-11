@@ -1,11 +1,11 @@
 from typing import List
 
-from dotty.command import Command
-from dotty.command_registry import CommandRegistry
-from dotty.profile_storage import ProfileStorage
-from dotty.security_level import SecurityLevel
-from dotty.user import User
-from dotty.user_registry import UserRegistry
+from bot.command import Command
+from bot.command_registry import CommandRegistry
+from bot.profile_storage import ProfileStorage
+from bot.security_level import SecurityLevel
+from bot.user import User
+from bot.user_registry import UserRegistry
 
 
 class FakeUser(User):
