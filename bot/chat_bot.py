@@ -26,7 +26,7 @@ class ChatBot:
         if command:
             return self._process_command(command, message, user_security_level)
 
-    def _get_user_security_level(self, user_identifier):
+    def _get_user_security_level(self, user_identifier) -> SecurityLevel:
         if self._users_registry.is_registered_user(user_identifier):
             return self._users_registry.get_user(user_identifier).get_user_clearance_level()
         return SecurityLevel.GUEST
@@ -71,7 +71,7 @@ class ChatBot:
             case _:
                 return
 
-    def _list_users(self):
+    def _list_users(self) -> str:
         return f"The current users\n{self._users_registry.get_user_listing()}"
 
     def _set_substitution(self, command: Command, message_body: str, security_level: SecurityLevel) -> Optional[str]:
