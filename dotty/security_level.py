@@ -1,7 +1,7 @@
 from enum import Enum
 from functools import total_ordering
 
-import json_fix
+import json_fix  # noqa:F401
 
 
 @total_ordering

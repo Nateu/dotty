@@ -1,5 +1,5 @@
+from dotty.chat_bot import ChatBot
 from dotty.command_registry import CommandRegistry
-from dotty.core import ChatBot
 from dotty.message import Message
 from dotty.profile_storage import ProfileStorage
 from dotty.user_registry import UserRegistry

@@ -1,5 +1,5 @@
 from expects import equal, expect, raise_error
-from mamba import context, describe, it
+from mamba import _context, context, describe, it
 
 from dotty.message import Message
 

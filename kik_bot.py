@@ -1,5 +1,3 @@
-from json import dumps
-
 from kik_unofficial.callbacks import KikClientCallback
 from kik_unofficial.client import KikClient
 from kik_unofficial.datatypes.peers import Group, GroupMember, User
@@ -14,8 +12,8 @@ from kik_unofficial.datatypes.xmpp.chatting import (
 from kik_unofficial.datatypes.xmpp.login import ConnectionFailedResponse
 from kik_unofficial.datatypes.xmpp.roster import FetchRosterResponse
 
+from dotty.chat_bot import ChatBot
 from dotty.command_registry import CommandRegistry
-from dotty.core import ChatBot
 from dotty.message import Message
 from dotty.profile_storage import ProfileStorage
 from dotty.statics import get_config

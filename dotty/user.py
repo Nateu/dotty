@@ -1,4 +1,4 @@
-import json_fix
+import json_fix  # noqa:F401
 
 from dotty.security_level import SecurityLevel
 

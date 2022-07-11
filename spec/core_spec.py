@@ -1,8 +1,8 @@
 from expects import equal, expect
 from mamba import context, describe, it
 
+from dotty.chat_bot import ChatBot
 from dotty.command_identifier import CommandIdentifier
-from dotty.core import ChatBot
 from dotty.message import Message
 from dotty.security_level import SecurityLevel
 from spec.fakes import FakeCommand, FakeCommandRegistry, FakeUser, FakeUserRegistry
