@@ -1,5 +1,5 @@
 from expects import equal, expect, raise_error
-from mamba import _context, context, describe, it
+from mamba import context, describe, it
 
 from bot.message import Message
 
