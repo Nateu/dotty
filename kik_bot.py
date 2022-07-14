@@ -1,3 +1,5 @@
+# from types import Union
+
 from kik_unofficial.callbacks import KikClientCallback
 from kik_unofficial.client import KikClient
 from kik_unofficial.datatypes.peers import Group, GroupMember, User
@@ -18,6 +20,9 @@ from bot.message import Message
 from bot.profile_storage import ProfileStorage
 from bot.statics import get_config
 from bot.user_registry import UserRegistry
+
+
+# from kik_unofficial.datatypes.xmpp.xiphias import UsersByAliasResponse, UsersResponse
 
 
 class InteractiveChatClient(KikClientCallback):
@@ -47,6 +52,13 @@ class InteractiveChatClient(KikClientCallback):
     def _add_group_member(self, group_member: GroupMember):
         self._users.append({"user_jid": group_member.jid})
         self.chat_bot.update_user(user_jid=group_member.jid)
+
+    # def on_xiphias_get_users_response(self, response: Union[UsersResponse, UsersByAliasResponse]):
+    #     from json import dumps
+    #     print(response.users)
+    #     self._user_info = response.users
+    #     for u in self._user_info:
+    #         print(dumps(u))
 
     def on_roster_received(self, response: FetchRosterResponse):
         for peer in response.peers:
