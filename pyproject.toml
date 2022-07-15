@@ -17,7 +17,6 @@ expects = "^0.9.0"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
 mamba = "^0.11.2"
-mutmut = "^2.4.0"
 pytest = "^7.1.2"
 
 [tool.coverage.run]

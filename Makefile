@@ -1,6 +1,6 @@
 .PHONY: default init serve pytest format lint sort run kik
 
-default: bdd mut lint sort format
+default: bdd lint sort format
 
 init:
 	poetry install
@@ -13,9 +13,6 @@ pytest:
 
 bdd:
 	bash ./scripts/coverage_mamba.sh
-
-mut:
-	bash ./scripts/mutmut.sh
 
 format:
 	bash ./scripts/black.sh
