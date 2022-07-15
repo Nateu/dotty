@@ -24,11 +24,6 @@ branch = true
 omit = ["*__init__*"]
 source = ["./bot/"]
 
-[tool.mutmut]
-paths_to_mutate="bot/"
-runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
-tests_dir="spec/"
-
 [tool.black]
 exclude = '''
 (
