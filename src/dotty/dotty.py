@@ -11,9 +11,9 @@ from kik_unofficial.datatypes.xmpp.chatting import (
 from kik_unofficial.datatypes.xmpp.login import ConnectionFailedResponse
 from kik_unofficial.datatypes.xmpp.roster import FetchRosterResponse
 
-from src.dotty.chat_bot import ChatBot
-from src.dotty.message import Message
-from src.dotty.statics import get_config
+from dotty.chat_bot import ChatBot
+from dotty.message import Message
+from dotty.statics import get_config
 
 
 class Dotty(KikClientCallback):

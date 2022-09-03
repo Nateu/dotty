@@ -1,8 +1,8 @@
-from src.dotty.chat_bot import ChatBot
-from src.dotty.command_registry import CommandRegistry
-from src.dotty.message import Message
-from src.dotty.profile_storage import ProfileStorage
-from src.dotty import UserRegistry
+from dotty.chat_bot import ChatBot
+from dotty.command_registry import CommandRegistry
+from dotty.message import Message
+from dotty.profile_storage import ProfileStorage
+from dotty.user_registry import UserRegistry
 
 
 class Colors:

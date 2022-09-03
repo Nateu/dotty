@@ -7,6 +7,6 @@ html/
 .coverage
 nohup.out
 user_register.json
-config.json
+testing/config.json
 .mutmut-cache
 kik-bot-api-unofficial
