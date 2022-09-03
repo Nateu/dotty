@@ -1,20 +1,19 @@
 [tool.poetry]
 name = "dotty"
-version = "0.1.0"
-description = ""
-authors = ["nateu"]
+version = "1.0.0"
+description = "An attempt at a chat bot"
+authors = ["Nateu codes <info@artocraft.nl>"]
 
 [tool.poetry.dependencies]
 boto3 = "^1.22.0"
-json-fix = "^0.1.3"
-kik-unofficial = {path = "../kik-bot-api-unofficial"}
-python = "^3.10"
+json-fix = "^0.3.0"
+python = ">=3.8.0,<3.9"
 
 [tool.poetry.dev-dependencies]
-black = "^22.3.0"
+black = "^22.8.0"
 coverage = "^6.1.2"
 expects = "^0.9.0"
-flake8 = "^4.0.1"
+flake8 = "^5.0.4"
 isort = "^5.10.1"
 mamba = "^0.11.2"
 mutmut = "^2.4.0"
@@ -25,11 +24,11 @@ coverage = ["toml"]
 
 [tool.coverage.run]
 branch = true
-omit = ["./bot/__init__.py"]
-source = ["./bot/"]
+omit = ["./src/dotty/__init__.py"]
+source = ["./src/dotty/"]
 
 [tool.mutmut]
-paths_to_mutate="bot/"
+paths_to_mutate="./src/dotty/"
 runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
 tests_dir="spec/"
 

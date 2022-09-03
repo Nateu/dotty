@@ -1,8 +1,8 @@
 from expects import equal, expect
 from mamba import before, context, describe, it
 
-from bot.security_level import SecurityLevel
-from bot.user_registry import UserRegistry
+from src.dotty import SecurityLevel
+from src.dotty import UserRegistry
 from spec.fakes import FakeProfileStorage
 
 

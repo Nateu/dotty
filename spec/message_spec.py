@@ -1,7 +1,7 @@
 from expects import equal, expect, raise_error
 from mamba import context, describe, it
 
-from bot.message import Message
+from src.dotty.message import Message
 
 
 with describe("Given a message") as self:

@@ -1,9 +1,9 @@
 from expects import equal, expect
 from mamba import context, describe, it
 
-from bot.command import Command, ContainsCommand, ExactCommand, StartsWithCommand, SubstitutionCommand
-from bot.command_identifier import CommandIdentifier
-from bot.security_level import SecurityLevel
+from src.dotty.command import Command, ContainsCommand, ExactCommand, StartsWithCommand, SubstitutionCommand
+from src.dotty.command_identifier import CommandIdentifier
+from src.dotty import SecurityLevel
 
 
 with describe("Given the a chat bot command") as self:

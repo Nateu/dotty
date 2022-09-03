@@ -1,11 +1,11 @@
 from typing import Optional
 
-from bot.command import Command
-from bot.command_identifier import CommandIdentifier
-from bot.command_registry import CommandRegistry
-from bot.message import Message
-from bot.security_level import SecurityLevel
-from bot.user_registry import UserRegistry
+from src.dotty.command import Command
+from src.dotty.command_identifier import CommandIdentifier
+from src.dotty.command_registry import CommandRegistry
+from src.dotty.message import Message
+from src.dotty.security_level import SecurityLevel
+from src.dotty.user_registry import UserRegistry
 
 
 class ChatBot:
@@ -32,44 +32,34 @@ class ChatBot:
         return SecurityLevel.GUEST
 
     def _process_command(self, command: Command, message: Message, user_security_level: SecurityLevel) -> Optional[str]:
-        match command.identifier:
-            # COMMANDS
-            case CommandIdentifier.LIST_COMMANDS:
-                return self._list_commands(user_security_level=user_security_level)
-            # SUBSTITUTIONS
-            case CommandIdentifier.SET_USER_SUBSTITUTION:
-                return self._set_substitution(command=command, message_body=message.body, security_level=SecurityLevel.USER)
-            case CommandIdentifier.SET_ADMIN_SUBSTITUTION:
-                return self._set_substitution(command=command, message_body=message.body, security_level=SecurityLevel.ADMIN)
-            case CommandIdentifier.LIST_SUBSTITUTIONS:
-                return self._list_substitutions(user_security_level=user_security_level)
-            case CommandIdentifier.GET_SUBSTITUTION:
-                return str(command)
-            # USERS
-            case CommandIdentifier.LIST_USERS:
-                return self._list_users()
-            # THEME
-            case CommandIdentifier.SET_THEME:
-                return self._set_theme(command=command, message_body=message.body)
-            case CommandIdentifier.GET_THEME:
-                return self._get_theme()
-            # OWNER
-            case CommandIdentifier.SET_ROLE_OWNER:
-                return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.OWNER)
-            case CommandIdentifier.REMOVE_ROLE_OWNER:
-                return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.ADMIN, revoke=True)
-            # ADMIN
-            case CommandIdentifier.SET_ROLE_ADMIN:
-                return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.ADMIN)
-            case CommandIdentifier.REMOVE_ROLE_ADMIN:
-                return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.USER, revoke=True)
-            # USER
-            case CommandIdentifier.SET_ROLE_USER:
-                return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.USER)
-            case CommandIdentifier.REMOVE_ROLE_USER:
-                return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.GUEST, revoke=True)
-            case _:
-                return
+        if command.identifier == CommandIdentifier.LIST_COMMANDS:
+            return self._list_commands(user_security_level=user_security_level)
+        if command.identifier == CommandIdentifier.SET_USER_SUBSTITUTION:
+            return self._set_substitution(command=command, message_body=message.body, security_level=SecurityLevel.USER)
+        if command.identifier == CommandIdentifier.SET_ADMIN_SUBSTITUTION:
+            return self._set_substitution(command=command, message_body=message.body, security_level=SecurityLevel.ADMIN)
+        if command.identifier == CommandIdentifier.LIST_SUBSTITUTIONS:
+            return self._list_substitutions(user_security_level=user_security_level)
+        if command.identifier == CommandIdentifier.GET_SUBSTITUTION:
+            return str(command)
+        if command.identifier == CommandIdentifier.LIST_USERS:
+            return self._list_users()
+        if command.identifier == CommandIdentifier.SET_THEME:
+            return self._set_theme(command=command, message_body=message.body)
+        if command.identifier == CommandIdentifier.GET_THEME:
+            return self._get_theme()
+        if command.identifier == CommandIdentifier.SET_ROLE_OWNER:
+            return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.OWNER)
+        if command.identifier == CommandIdentifier.REMOVE_ROLE_OWNER:
+            return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.ADMIN, revoke=True)
+        if command.identifier == CommandIdentifier.SET_ROLE_ADMIN:
+            return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.ADMIN)
+        if command.identifier == CommandIdentifier.REMOVE_ROLE_ADMIN:
+            return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.USER, revoke=True)
+        if command.identifier == CommandIdentifier.SET_ROLE_USER:
+            return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.USER)
+        if command.identifier == CommandIdentifier.REMOVE_ROLE_USER:
+            return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.GUEST, revoke=True)
 
     def _list_users(self) -> str:
         return f"The current users\n{self._users_registry.get_user_listing()}"

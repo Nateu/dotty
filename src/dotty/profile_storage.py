@@ -2,9 +2,9 @@ from typing import List
 
 from boto3.dynamodb.conditions import Key
 
-from bot.dynamo_storage import DynamoStorage
-from bot.security_level import SecurityLevel
-from bot.user import User
+from src.dotty.dynamo_storage import DynamoStorage
+from src.dotty.security_level import SecurityLevel
+from src.dotty.user import User
 
 
 class ProfileStorage(DynamoStorage):

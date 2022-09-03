@@ -1,14 +1,14 @@
 from expects import equal, expect
 from mamba import context, describe, it
 
-from bot.chat_bot import ChatBot
-from bot.command_identifier import CommandIdentifier
-from bot.message import Message
-from bot.security_level import SecurityLevel
+from src.dotty.chat_bot import ChatBot
+from src.dotty.command_identifier import CommandIdentifier
+from src.dotty.message import Message
+from src.dotty.security_level import SecurityLevel
 from spec.fakes import FakeCommand, FakeCommandRegistry, FakeUser, FakeUserRegistry
 
 
-with describe("Given the bot Dotty") as self:
+with describe("Given the dotty Dotty") as self:
     with context("when processing a message send by a guest"):
         with it("should not respond at all"):
             # Set Up
