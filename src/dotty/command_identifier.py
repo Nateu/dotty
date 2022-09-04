@@ -17,3 +17,6 @@ class CommandIdentifier(Enum):
     SET_ROLE_USER = auto()
     REMOVE_ROLE_USER = auto()
     UNSET = auto()
+
+    def __eq__(self, other):
+        return bool(self.value == other.value)

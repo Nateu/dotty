@@ -37,8 +37,8 @@ tests_dir="spec/"
 exclude = '''
 (
   /(
-      \.eggs         # exclude a few common directories in the
-    | \.git          # root of the project
+      \.eggs
+    | \.git
     | \.hg
     | \.mypy_cache
     | \.tox
@@ -48,11 +48,12 @@ exclude = '''
     | build
     | dist
     | htmlcov
+    | src/kik-bot-api-unofficial
   )/
 )
 '''
 line-length = 140
-target-version=["py310"]
+target-version=["py38"]
 
 [tool.isort]
 combine_as_imports = true

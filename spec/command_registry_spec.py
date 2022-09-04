@@ -1,15 +1,15 @@
 from expects import equal, expect
-from mamba import before, context, describe, it
+from mamba import before, context, describe, it, fcontext
 
 from src.dotty.command_registry import CommandRegistry
-from src.dotty import SecurityLevel
+from src.dotty.security_level import SecurityLevel
 
 
 with describe("Given a command registry") as self:
     with context("when it is created"):
         with it("should 12 commands"):
             command_registry = CommandRegistry()
-            count = len(command_registry._all_commands)
+            count = command_registry.get_command_count()
             expect(command_registry.get_commands_string(user_security_level=SecurityLevel.OWNER).count("\n")).to(equal(count))
 
         with it("should have no substitutions"):
@@ -23,7 +23,7 @@ with describe("Given a command registry") as self:
                 equal(None)
             )
 
-    with context("when searching for teh usage command"):
+    with context("when searching for the usage command"):
         with it("should return the command"):
             command_registry = CommandRegistry()
             expect(

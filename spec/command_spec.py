@@ -1,9 +1,9 @@
 from expects import equal, expect
-from mamba import context, describe, it
+from mamba import context, describe, it, fit
 
 from src.dotty.command import Command, ContainsCommand, ExactCommand, StartsWithCommand, SubstitutionCommand
 from src.dotty.command_identifier import CommandIdentifier
-from src.dotty import SecurityLevel
+from src.dotty.security_level import SecurityLevel
 
 
 with describe("Given the a chat bot command") as self:
@@ -51,7 +51,7 @@ with describe("Given the a chat bot command") as self:
                 description="A command to retrieve the current theme",
                 security_level=SecurityLevel.USER,
             )
-            expect(my_command.get_security_level()).to(equal(SecurityLevel.USER))
+            expect(my_command.get_security_level()).to(equal(SecurityLevel.USER.value))
 
         with it("should give its trigger and description when printed"):
             my_command = Command(

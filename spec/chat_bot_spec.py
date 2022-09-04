@@ -1,5 +1,5 @@
 from expects import equal, expect
-from mamba import context, describe, it
+from mamba import context, describe, it, fcontext
 
 from src.dotty.chat_bot import ChatBot
 from src.dotty.command_identifier import CommandIdentifier
@@ -70,7 +70,7 @@ with describe("Given the dotty Dotty") as self:
                 expect(self.chat_bot.process_message(input_message)).to(equal(None))
 
         with context("and they list all commands"):
-            with it("should print 'These commands are available:\nThese are all the commands'"):
+            with it("should print a string containing 'gcsAABBCC123'"):
                 # Set Up
                 self.command_registry = FakeCommandRegistry()
                 self.command_registry.get_matching_command_response = FakeCommand()
@@ -78,7 +78,7 @@ with describe("Given the dotty Dotty") as self:
                 self.command_registry.get_matching_command_response.get_trigger_response = "Usage"
                 self.command_registry.get_matching_command_response.get_security_level_response = SecurityLevel.OWNER
                 self.command_registry.get_matching_command_response.has_match_response = True
-                self.command_registry.get_commands_string_response = "These are all the commands"
+                self.command_registry.get_commands_string_response = "gcsAABBCC123"
                 self.users_registry = FakeUserRegistry()
                 self.users_registry.is_registered_user_outcome = True
                 self.users_registry.get_user_response = FakeUser()
@@ -93,7 +93,8 @@ with describe("Given the dotty Dotty") as self:
                 # Run
                 input_message = Message("usage", "@owner", "#group")
                 # Assertion
-                expect(self.chat_bot.process_message(input_message)).to(equal("These commands are available:\nThese are all the commands"))
+                result = self.chat_bot.process_message(input_message)
+                expect(bool("gcsAABBCC123" in result)).to(equal(True))
 
         with context("and they set a new USER substitution"):
             with it("should print 'When you say: \"substitute\", I say: this is a substitution text'"):
@@ -483,6 +484,6 @@ with describe("Given the dotty Dotty") as self:
                     command_registry=self.command_registry,
                 )
                 # Run
-                input_message = Message("Users", "@owner", "#group")
+                input_message = Message("User List", "@owner", "#group")
                 # Assertion
                 expect(self.chat_bot.process_message(input_message)).to(equal("The current users\nPascal"))

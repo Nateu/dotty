@@ -3,9 +3,9 @@ from typing import List
 from src.dotty.command import Command
 from src.dotty.command_registry import CommandRegistry
 from src.dotty.profile_storage import ProfileStorage
-from src.dotty import SecurityLevel
-from src.dotty import User
-from src.dotty import UserRegistry
+from src.dotty.security_level import SecurityLevel
+from src.dotty.user import User
+from src.dotty.user_registry import UserRegistry
 
 
 class FakeUser(User):

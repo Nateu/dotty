@@ -15,7 +15,7 @@ class Command:
         return f'"{self._trigger}" - {self._description}'
 
     def has_match(self, message_body: str, user_security_level: SecurityLevel) -> bool:
-        pass
+        pass  #will be overloaded!!
 
     def get_trigger(self) -> str:
         return self._trigger
@@ -27,10 +27,10 @@ class Command:
         return self._type == CommandType.SUBSTITUTION
 
     def has_clearance(self, requested_by: SecurityLevel):
-        return requested_by >= self._security_level
+        return requested_by.value >= self._security_level.value
 
     def get_security_level(self):
-        return self._security_level
+        return self._security_level.value
 
 
 class StartsWithCommand(Command):

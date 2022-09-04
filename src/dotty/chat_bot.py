@@ -32,33 +32,33 @@ class ChatBot:
         return SecurityLevel.GUEST
 
     def _process_command(self, command: Command, message: Message, user_security_level: SecurityLevel) -> Optional[str]:
-        if command.identifier == CommandIdentifier.LIST_COMMANDS:
+        if command.identifier.value == CommandIdentifier.LIST_COMMANDS.value:
             return self._list_commands(user_security_level=user_security_level)
-        if command.identifier == CommandIdentifier.SET_USER_SUBSTITUTION:
+        if command.identifier.value == CommandIdentifier.SET_USER_SUBSTITUTION.value:
             return self._set_substitution(command=command, message_body=message.body, security_level=SecurityLevel.USER)
-        if command.identifier == CommandIdentifier.SET_ADMIN_SUBSTITUTION:
+        if command.identifier.value == CommandIdentifier.SET_ADMIN_SUBSTITUTION.value:
             return self._set_substitution(command=command, message_body=message.body, security_level=SecurityLevel.ADMIN)
-        if command.identifier == CommandIdentifier.LIST_SUBSTITUTIONS:
+        if command.identifier.value == CommandIdentifier.LIST_SUBSTITUTIONS.value:
             return self._list_substitutions(user_security_level=user_security_level)
-        if command.identifier == CommandIdentifier.GET_SUBSTITUTION:
+        if command.identifier.value == CommandIdentifier.GET_SUBSTITUTION.value:
             return str(command)
-        if command.identifier == CommandIdentifier.LIST_USERS:
+        if command.identifier.value == CommandIdentifier.LIST_USERS.value:
             return self._list_users()
-        if command.identifier == CommandIdentifier.SET_THEME:
+        if command.identifier.value == CommandIdentifier.SET_THEME.value:
             return self._set_theme(command=command, message_body=message.body)
-        if command.identifier == CommandIdentifier.GET_THEME:
+        if command.identifier.value == CommandIdentifier.GET_THEME.value:
             return self._get_theme()
-        if command.identifier == CommandIdentifier.SET_ROLE_OWNER:
+        if command.identifier.value == CommandIdentifier.SET_ROLE_OWNER.value:
             return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.OWNER)
-        if command.identifier == CommandIdentifier.REMOVE_ROLE_OWNER:
+        if command.identifier.value == CommandIdentifier.REMOVE_ROLE_OWNER.value:
             return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.ADMIN, revoke=True)
-        if command.identifier == CommandIdentifier.SET_ROLE_ADMIN:
+        if command.identifier.value == CommandIdentifier.SET_ROLE_ADMIN.value:
             return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.ADMIN)
-        if command.identifier == CommandIdentifier.REMOVE_ROLE_ADMIN:
+        if command.identifier.value == CommandIdentifier.REMOVE_ROLE_ADMIN.value:
             return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.USER, revoke=True)
-        if command.identifier == CommandIdentifier.SET_ROLE_USER:
+        if command.identifier.value == CommandIdentifier.SET_ROLE_USER.value:
             return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.USER)
-        if command.identifier == CommandIdentifier.REMOVE_ROLE_USER:
+        if command.identifier.value == CommandIdentifier.REMOVE_ROLE_USER.value:
             return self._set_role(command=command, message_body=message.body, destination_role=SecurityLevel.GUEST, revoke=True)
 
     def _list_users(self) -> str:
@@ -92,12 +92,12 @@ class ChatBot:
         user_identifier = message_body[len(command.get_trigger()) :]
         user_role = self._get_user_security_level(user_identifier)
         if revoke:
-            if user_role < destination_role:
+            if user_role.value < destination_role.value:
                 return "Rights already revoked"
             self._users_registry.register_user(user_identifier, destination_role)
             return "Rights revoked"
         else:
-            if user_role >= destination_role:
+            if user_role.value >= destination_role.value:
                 return "User already registered"
             self._users_registry.register_user(user_identifier, destination_role)
             return "User registered"

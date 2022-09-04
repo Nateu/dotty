@@ -1,9 +1,9 @@
 from json import dumps
 
 from expects import equal, expect, raise_error
-from mamba import context, describe, it
+from mamba import context, describe, it, fdescribe
 
-from src.dotty import SecurityLevel
+from src.dotty.security_level import SecurityLevel
 
 
 with describe("Given a Security Level") as self:

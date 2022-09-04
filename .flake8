@@ -4,3 +4,4 @@ max-line-length = 140
 max-complexity = 13
 select = B, C, E, F, W, T4, B9
 per-file-ignores = __init__.py:F401
+exclude = src/kik-bot-api-unofficial
