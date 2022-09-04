@@ -28,11 +28,6 @@ branch = true
 omit = ["./src/dotty/__init__.py"]
 source = ["./src/dotty/"]
 
-[tool.mutmut]
-paths_to_mutate="./src/dotty/"
-runner="mamba --enable-coverage --format=documentation ./spec/*_spec.py"
-tests_dir="spec/"
-
 [tool.black]
 exclude = '''
 (
